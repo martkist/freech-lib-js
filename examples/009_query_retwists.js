@@ -3,9 +3,9 @@
  * The following example lists the timestamps and retwists of a given post.
  */
 
-Twister = require("../src/Twister.js");
+Freech = require("../src/Freech.js");
 
-Twister.getUser("hn").doPost(13670,function(post){
+Freech.getUser("hn").doPost(13670,function(post){
   
   post.doRetwistingPosts(function(retwists){
 

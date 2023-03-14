@@ -1,30 +1,30 @@
 {
-  "name": "twister-lib-js",
+  "name": "freech-lib-js",
   "version": "0.4.1",
-  "description": "A javascript library for twister (see twister.net.co)",
-  "main": "src/Twister.js",
+  "description": "A javascript library for freech (see freech.net.co)",
+  "main": "src/Freech.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle": "browserify src/Twister.js --standalone Twister > twister-lib.js",
+    "bundle": "browserify src/Freech.js --standalone Freech > freech-lib.js",
     "docs": "jsdoc src/*.js src/ServerWallet/*.js -d docs"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Tschaul/twister-lib-js"
+    "url": "https://github.com/martkist/freech-lib-js"
   },
   "keywords": [
-    "twister",
+    "freech",
     "microblogging",
     "blockchain",
     "dht",
     "torrent"
   ],
-  "author": "Julian Steinwachs (@tschaul)",
+  "author": "@martkist",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Tschaul/twister-lib-js/issues"
+    "url": "https://github.com/martkist/freech-lib-js/issues"
   },
-  "homepage": "https://github.com/Tschaul/twister-lib-js",
+  "homepage": "https://github.com/martkist/freech-lib-js",
   "dependencies": {
     "bencode": "*",
     "bip38": "^1.4.0",

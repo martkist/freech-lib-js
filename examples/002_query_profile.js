@@ -3,10 +3,10 @@
  * resources such as the profile ...
  */
 
-Twister = require("../src/Twister.js")
+Freech = require("../src/Freech.js")
 
-Twister.getUser("tschaul").doProfile(function(profile){
+Freech.getUser("martkistdevs").doProfile(function(profile){
     
-  console.log("tschaul's full name is "+profile.getField("fullname"));
+  console.log("martkistdev's full name is "+profile.getField("fullname"));
 
 });

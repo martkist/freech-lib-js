@@ -7,9 +7,9 @@
  * conversation request so their outputs do not overlapp
  */
 
-Twister = require("../src/Twister.js")
+Freech = require("../src/Freech.js")
 
-Twister.setup({signatureVerification:"none"}); //,logfunc:function(log){console.log(log)}}
+Freech.setup({signatureVerification:"none"}); //,logfunc:function(log){console.log(log)}}
 
 var goUpConversation = function (post) {
         
@@ -38,4 +38,4 @@ var doRepliesRecursive = function (replies) {
 
 console.log("full conversation of black_puppydog:post729")
 
-Twister.getUser("ulrichard").doPost(270,goUpConversation);
+Freech.getUser("ulrichard").doPost(270,goUpConversation);

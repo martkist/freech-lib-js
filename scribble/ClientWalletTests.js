@@ -1,30 +1,30 @@
 
-Twister = require("../src/Twister.js");
+Freech = require("../src/Freech.js");
 
-//Twister.setup({logfunc: function(l){console.log(l)}})
+//Freech.setup({logfunc: function(l){console.log(l)}})
 
-Twister.importClientSideAccount("pampalulu","L12kz6tabDN6VmPes1rfEpiznztPF6vgkHp8UZVBgZadxzebHhAp",function(){
+Freech.importClientSideAccount("pampalulu","L12kz6tabDN6VmPes1rfEpiznztPF6vgkHp8UZVBgZadxzebHhAp",function(){
 	
     console.log("blub")
     
-	Twister.getAccount("pampalulu").activateTorrents(function(){
+	Freech.getAccount("pampalulu").activateTorrents(function(){
       
-      console.log(Twister.getAccount("pampalulu")._torrents["pampalulu"]._active)
+      console.log(Freech.getAccount("pampalulu")._torrents["pampalulu"]._active)
       
-      /*Twister.getAccount("pampalulu").updateProfileFields({location:"fance new location"},function(){
+      /*Freech.getAccount("pampalulu").updateProfileFields({location:"fance new location"},function(){
         console.log("yay");
       })*/
       
-      /*Twister.getAccount("pampalulu").post(
-        "another test with a mention @tschaul and hashtag #blub",function(post){
+      /*Freech.getAccount("pampalulu").post(
+        "another test with a mention @martkistdevs and hashtag #blub",function(post){
 
-          //Twister.getUser("pampalulu").doStatus(function(post){
+          //Freech.getUser("pampalulu").doStatus(function(post){
             console.log(post.getContent())
           //});
 
       });*/
       
-      Twister.getAccount("pampalulu").unfollow(
+      Freech.getAccount("pampalulu").unfollow(
         "rysiek",function(fols){
             console.log(fols)
         }
@@ -34,22 +34,22 @@ Twister.importClientSideAccount("pampalulu","L12kz6tabDN6VmPes1rfEpiznztPF6vgkHp
         msg: "test"
       };
       
-      Twister.getAccount("pampalulu")._signAndAddToTorrent(post,function(){
+      Freech.getAccount("pampalulu")._signAndAddToTorrent(post,function(){
         console.log("yay");
       })*/
       
-      /*Twister.getAccount("timbuktu").reply("tschaul",34,
-        "test reply from node using twister-lib-js",function(post){
+      /*Freech.getAccount("timbuktu").reply("martkistdevs",34,
+        "test reply from node using freech-lib-js",function(post){
         
-          Twister.getUser("timbuktu").doStatus(function(){
+          Freech.getUser("timbuktu").doStatus(function(){
             console.log(post.getContent())
           });
 
       });
       
-      Twister.getAccount("timbuktu").retwist("tschaul",34,function(post){
+      Freech.getAccount("timbuktu").retwist("martkistdevs",34,function(post){
         
-          Twister.getUser("timbuktu").doStatus(function(){
+          Freech.getUser("timbuktu").doStatus(function(){
             
             console.log(post.getRetwistedContent())
             

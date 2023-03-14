@@ -1,13 +1,13 @@
 /*
- * example of publishing user in server wallet to twister network
+ * example of publishing user in server wallet to freech network
  * this example will produce a 500
  */
 
 
-var TwisterLocal =  require("../src/Twister.js");
+var FreechLocal =  require("../src/Freech.js");
 
 
- TwisterLocal.publishServerSideAccount ( 'tschaul' ,
+ FreechLocal.publishServerSideAccount ( 'martkistdevs' ,
        function() {
  });
 

@@ -10,15 +10,15 @@
   * 
   */
 
-Twister = require("../src/Twister.js")
+Freech = require("../src/Freech.js")
 
 var qid = Math.random();
 
 var allResults = [];
 
-Twister.onQueryComplete(qid,function(){console.log("all results: ",allResults)});
+Freech.onQueryComplete(qid,function(){console.log("all results: ",allResults)});
 
-Twister.getUser("tschaul").doFollowings(function(followings){
+Freech.getUser("martkistdevs").doFollowings(function(followings){
   
   for(var i in followings) {
 

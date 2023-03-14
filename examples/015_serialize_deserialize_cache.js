@@ -1,23 +1,23 @@
 /* 
- * Another important feature of twister-lib-js is the cache. The cache is used extensively 
- * by twister-lib-js to minimize the number of JSON-RPC requests. The Twister object provides 
+ * Another important feature of freech-lib-js is the cache. The cache is used extensively 
+ * by freech-lib-js to minimize the number of JSON-RPC requests. The Freech object provides 
  * methods that can be used to save the cache (e.g. on hard disk or in the browser's local 
  * storage) and to restore it. In this example we query a post and save the cache to a string. 
  * For that we have set the signature verification mode to instant because unverified posts 
  * are not restored.
  */
 
-Twister = require("../src/Twister.js")
+Freech = require("../src/Freech.js")
 
-Twister.setup({signatureVerification:"instant"})
+Freech.setup({signatureVerification:"instant"})
 
 var cacheStore = "";
 
-Twister.getUser("tschaul").doPost(34,function(post){
+Freech.getUser("martkistdevs").doPost(34,function(post){
     
   console.log("got post. storing cache.")
 
-  cacheStore = JSON.stringify(Twister.serializeCache());
+  cacheStore = JSON.stringify(Freech.serializeCache());
  
 });
 
@@ -30,9 +30,9 @@ Twister.getUser("tschaul").doPost(34,function(post){
 
 setTimeout(function(){
 
-  Twister._userCache = {};
+  Freech._userCache = {};
   
-  if (Twister.getUser("tschaul").getPost(34)==null) {
+  if (Freech.getUser("martkistdevs").getPost(34)==null) {
 
     console.log("post is gone. cache is empty.")
 
@@ -47,9 +47,9 @@ setTimeout(function(){
 
 setTimeout(function(){
 
-  Twister.deserializeCache(JSON.parse(cacheStore));
+  Freech.deserializeCache(JSON.parse(cacheStore));
 
-  var post = Twister.getUser("tschaul").getPost(34);
+  var post = Freech.getUser("martkistdevs").getPost(34);
   
   if (post) {
 

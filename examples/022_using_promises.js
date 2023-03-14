@@ -3,15 +3,15 @@
  * resources such as the profile ...
  */
 
-Twister = require("../src/Twister.js")
+Freech = require("../src/Freech.js")
 
-Twister.getUser("tschaul").doProfile().then(function(profile){
+Freech.getUser("martkistdevs").doProfile().then(function(profile){
     
-  console.log("tschaul's full name is "+profile.getField("fullname"));
+  console.log("martkistdevs's full name is "+profile.getField("fullname"));
 
 }).catch(function(error){console.log(error)});
 
-Twister.getUser("tschaul").doPost(34).then(function(post){
+Freech.getUser("martkistdevs").doPost(34).then(function(post){
     
 	if (post.isRetwist()) {
       console.log("retwist:"+post.getRetwistedContent())

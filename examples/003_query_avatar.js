@@ -2,10 +2,10 @@
  * ... the avatar ...
  */
 
-Twister = require("../src/Twister.js")
+Freech = require("../src/Freech.js")
 
-Twister.getUser("tschaul").doAvatar(function(avatar){
+Freech.getUser("martkistdevs").doAvatar(function(avatar){
     
-  console.log("tschauls avatar url starts with: "+avatar.getUrl().substr(0, 30)+"...");
+  console.log("martkistdevs avatar url starts with: "+avatar.getUrl().substr(0, 30)+"...");
 
 });

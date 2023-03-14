@@ -2,9 +2,9 @@
  * ... the mentions (here, the callback argument is an array of post objects) ...
  */
 
-Twister = require("../src/Twister.js")
+Freech = require("../src/Freech.js")
 
-Twister.getUser("mfreitas").doMentions(function(mentions){
+Freech.getUser("mfreitas").doMentions(function(mentions){
   
   for(var i in mentions){
 

@@ -4,13 +4,13 @@
  * of a user.
  */
 
-Twister = require("../src/Twister.js");
+Freech = require("../src/Freech.js");
 
-Twister.loadServerAccounts(function(){
+Freech.loadServerAccounts(function(){
 
 	var count=1;
 	
-	Twister.getAccount("tschaul").doLatestDirectMessagesUntil("timbuktu",function(message){
+	Freech.getAccount("martkistdevs").doLatestDirectMessagesUntil("timbuktu",function(message){
 	
 		console.log(message.getSender()+": "+message.getContent());
 		if (count++==5) { return false }

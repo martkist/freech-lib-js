@@ -4,33 +4,33 @@
  */
 
 
-Twister = require("../src/Twister.js");
+Freech = require("../src/Freech.js");
 
-Twister.loadServerAccounts(function(){
+Freech.loadServerAccounts(function(){
 	
-	Twister.getAccount("timbuktu").activateTorrents(function(){
+	Freech.getAccount("timbuktu").activateTorrents(function(){
       
-      Twister.getAccount("timbuktu").post(
-        "test post from node using twister-lib-js",function(post){
+      Freech.getAccount("timbuktu").post(
+        "test post from node using freech-lib-js",function(post){
 
-          Twister.getUser("timbuktu").doStatus(function(){
+          Freech.getUser("timbuktu").doStatus(function(){
             console.log(post.getContent())
           });
 
       });
       
-      Twister.getAccount("timbuktu").reply("tschaul",34,
-        "test reply from node using twister-lib-js",function(post){
+      Freech.getAccount("timbuktu").reply("martkistdevs",34,
+        "test reply from node using freech-lib-js",function(post){
         
-          Twister.getUser("timbuktu").doStatus(function(){
+          Freech.getUser("timbuktu").doStatus(function(){
             console.log(post.getContent())
           });
 
       });
       
-      Twister.getAccount("timbuktu").retwist("tschaul",34,function(post){
+      Freech.getAccount("timbuktu").retwist("martkistdevs",34,function(post){
         
-          Twister.getUser("timbuktu").doStatus(function(){
+          Freech.getUser("timbuktu").doStatus(function(){
             
             console.log(post.getRetwistedContent())
             

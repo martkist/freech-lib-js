@@ -1,17 +1,17 @@
-# twister-lib-js
-A [Twister](http://twister.net.co) Library in JavaScript
+# freech-lib-js
+A [Freech](http://github.com/martkist/freech-core) Library in JavaScript
 
 ## Scope of this Project
 
-twister-lib-js handles all querying and manipulation of the Twister P2P network, given the availability of a (remote or local) twisterd JSON-RPC endpoint. This includes managing the network resource, by bundleing queries and by caching. This also includes the ability sign posts and to encrypt and decrypt direct messages locally.
+freech-lib-js handles all querying and manipulation of the Freech P2P network, given the availability of a (remote or local) freechd JSON-RPC endpoint. This includes managing the network resource, by bundleing queries and by caching. This also includes the ability sign posts and to encrypt and decrypt direct messages locally.
 
-twister-lib-js should be compilable for as many platforms as possible including:
+freech-lib-js should be compilable for as many platforms as possible including:
 - All popular Browsers (for web apps as well as firefoxOS)
 - node-js (for server-side functionality)
 - The iOS Javascript VM (for building native iOS apps)
 - The Android Javascript VM (for building native android apps)
 
-A techdemo of twister-lib-js combined with react-js can be found at http://github.com/Tschaul/twister-react
+A techdemo of freech-lib-js combined with react-js can be found at http://github.com/martkist/freech-react
 
 ## Implementation Status
 
@@ -49,35 +49,35 @@ A techdemo of twister-lib-js combined with react-js can be found at http://githu
 
 From inside the project folder run
 ```
-npm install twister-lib-js
+npm install freech-lib-js
 ```
 Then inside your code import the library using
 ```
-Twister = require('twister-lib-js');
+Freech = require('freech-lib-js');
 ```
 
 #### In a Webapp
 
-Download the `twister-lib.js` file into you project folder. Link to it inside html using
+Download the `freech-lib.js` file into you project folder. Link to it inside html using
 ```
-<script src="path/to/twister-lib.js"></script>
+<script src="path/to/freech-lib.js"></script>
 ```
 
 ## Code Examples
 
-Display the content of the latest post of user tschaul:
+Display the content of the latest post of user martkistdevs:
 
 ```
-Twister.getUser("tschaul").doStatus(function(post){
+Freech.getUser("martkistdevs").doStatus(function(post){
   console.log(post.getContent());  
 });
 ```
 
-For more code examples in tutorial form, see [/examples](https://github.com/Tschaul/twister-lib-js/tree/master/examples)
+For more code examples in tutorial form, see [/examples](https://github.com/martkist/freech-lib-js/tree/master/examples)
 
 ## Error Codes
 
-twister-lib-js passes through all JSON-RPC errors. Internal errors are thrown in the same format with codes ranging between 32050 and 32099:
+freech-lib-js passes through all JSON-RPC errors. Internal errors are thrown in the same format with codes ranging between 32050 and 32099:
 
 * 32050: DHT resource signature could not be verified.
 * 32051: Unknown query setting was requested.
@@ -98,7 +98,7 @@ twister-lib-js passes through all JSON-RPC errors. Internal errors are thrown in
 
 ## 0.3.0
 
-* New query setting `queryId`. Can be used to mark multiple queries with a common id. With the `Twister.onQueryComplete(...)` function a handler can be registered that is triggered when the last query is completed. see examples/021_deep_fetching.js
+* New query setting `queryId`. Can be used to mark multiple queries with a common id. With the `Freech.onQueryComplete(...)` function a handler can be registered that is triggered when the last query is completed. see examples/021_deep_fetching.js
 
 ### 0.2.1
 
@@ -107,5 +107,5 @@ twister-lib-js passes through all JSON-RPC errors. Internal errors are thrown in
 ## 0.2.0
 
 * Resources can now remove themselves from the cache using their own trim() function.
-* New function Twister.trimCache(timestamp) deletes every resource from the cache that is older than the timestamp, or has not been accessed since the timestamp. Needed to manage localStorage size in browsers.
+* New function Freech.trimCache(timestamp) deletes every resource from the cache that is older than the timestamp, or has not been accessed since the timestamp. Needed to manage localStorage size in browsers.
 * Resources with invalid signatures now get removed from the cache.

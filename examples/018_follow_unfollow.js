@@ -2,20 +2,20 @@
  * Following and unfollowing is also done through the account object.
  */
 
-Twister = require("../src/Twister.js");
+Freech = require("../src/Freech.js");
 
-Twister.loadServerAccounts(function(){
+Freech.loadServerAccounts(function(){
 	
-  Twister.getAccount("pampalulu").activateTorrents(function(){
+  Freech.getAccount("pampalulu").activateTorrents(function(){
 
-    Twister.getAccount("pampalulu").follow("bbc_world",function(newfollowings){
+    Freech.getAccount("pampalulu").follow("bbc_world",function(newfollowings){
 
       console.log("following bbc_world: ");
       newfollowings.map(function(fol){
         console.log(fol.getUsername())
       });
 
-      Twister.getAccount("pampalulu").unfollow("bbc_world",function(newfollowings){
+      Freech.getAccount("pampalulu").unfollow("bbc_world",function(newfollowings){
 
         console.log("not following bbc_world: ");
         newfollowings.map(function(fol){

@@ -1,11 +1,11 @@
 /*
  * Hashtag resources are not assigned to a user. Therefore they are queried directly from 
- * the Twister object.
+ * the Freech object.
  */
 
-Twister = require("../src/Twister.js");
+Freech = require("../src/Freech.js");
 
-Twister.doHashtagPosts("news",function(posts){
+Freech.doHashtagPosts("news",function(posts){
   
   for (var i in posts) {
   

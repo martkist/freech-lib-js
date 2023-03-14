@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: FreechStream.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: FreechStream.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var inherits = require('inherits');
+
+var FreechResource = require('./FreechResource.js');
+//var FreechTorrent = require('./FreechTorrent.js');
+
+/**
+ * Describes the stream of posts of a {@link FreechUser}.
+ * @class
+ */
+FreechStream = function (name,scope) {
+    
+    FreechResource.call(this,name,scope);
+    
+    this._latestId = -1;
+    this._posts = {};
+    this._verified = true; //post are verified individually
+    
+    this._activeTorrentUser = null;
+    
+    this._type = "stream";
+
+}
+
+inherits(FreechStream,FreechResource);
+
+FreechStream.prototype.flatten = function () {
+
+    var flatData = FreechResource.prototype.flatten.call(this);
+    
+    var flatPosts = [];
+    
+    for (var id in this._posts){
+        flatPosts.push(this._posts[id].flatten());
+    }
+    
+    flatData.posts = flatPosts;
+    flatData.latestId  = this._latestId;
+    flatData.activeTorrentUser  = this._activeTorrentUser;
+    
+    
+    return flatData;
+
+
+}
+
+FreechStream.prototype.inflate = function (flatData) {
+    
+  var Freech = this._scope;
+
+  var FreechPost = require('./FreechPost.js');
+
+  FreechResource.prototype.inflate.call(this,flatData);
+
+  this._latestId = flatData.latestId;
+  this._activeTorrentUser = flatData.activeTorrentUser;
+  
+  for(var i in flatData.posts){
+
+    if (flatData.posts[i].verified) {
+
+      var newpost = new FreechPost(flatData.posts[i].data,flatData.posts[i].signature,Freech);
+      newpost.inflate(flatData.posts[i]);
+      this._posts[newpost.getId()]=newpost;
+
+    } else if (flatData.posts[i].data.k==this._latestId) {
+
+      this._latestId = -1;
+      this._lastUpdate = -1;
+
+    }
+
+  }
+
+}
+
+FreechStream.prototype._do =  function (cbfunc) {
+    
+    this._doPost(this._latestId,cbfunc);
+    
+}
+
+FreechStream.prototype.updateCache = function (cbfunc) {
+  
+  var Freech = this._scope;
+  
+  if (this._activeTorrentUser) {
+    Freech._wallet[this._activeTorrentUser]._torrents[this._name].updatePostsCache(cbfunc);
+  } else {
+    this._log("user has no active torrent")
+    cbfunc(false);
+  }
+
+}
+
+FreechStream.prototype.fillCache = function (id,cbfunc) {
+  
+  var Freech = this._scope;
+  
+  if (this._activeTorrentUser) {
+    Freech._wallet[this._activeTorrentUser]._torrents[this._name].fillPostsCache(id,cbfunc);
+  } else {
+    cbfunc(false);
+  }
+
+}
+
+FreechStream.prototype._queryAndDo = function (cbfunc) {
+  
+    var thisResource = this;
+        
+    thisResource.updateCache(function(success){
+
+        if (success) {
+            
+            thisResource._log("updating cache with torrent successfull")
+          
+            thisResource._do(cbfunc);
+            thisResource._updateInProgress = false;
+
+        } else {
+          
+            thisResource._log("updating cache with torrent failed")
+
+            thisResource.dhtget([thisResource._name, "status", "s"], function (result) {
+
+                    thisResource._log("result from dhtget: "+JSON.stringify(result));
+              
+                    if (result[0]) {
+
+                        thisResource._verifyAndCachePost(result[0].p.v, function(newpost) {
+
+                            thisResource._latestId = newpost.getId();
+                            thisResource._lastUpdate = Date.now()/1000;
+                            thisResource._updateInProgress = false;
+
+                            cbfunc(newpost);
+
+                        });
+
+
+                    } else { 
+			
+                      thisResource._handleError({
+                        message: "DHT resource is empty.",
+                        code: 32052
+                      })
+                      thisResource._updateInProgress = false;
+                      //cbfunc(null);
+                      
+                    }
+
+                }
+
+            );
+
+        }
+
+    });  
+        
+}
+
+FreechStream.prototype._verifyAndCachePost =  function (payload,cbfunc) {
+    
+    var Freech = this._scope;
+        
+    var thisResource = this;
+    
+    var newid = payload.userpost.k;
+    var payloadUser = payload.userpost.n;
+
+    //console.log(payloadUser+":post"+newid);
+    
+    if( !( newid in thisResource._posts) ) {
+
+		var signatureVerification = thisResource.getQuerySetting("signatureVerification");
+		
+        var FreechPost = require('./FreechPost.js');
+
+        var newpost = new FreechPost(payload.userpost,payload.sig_userpost,Freech);
+
+        thisResource._posts[newpost.getId()] = newpost;
+      
+        if ( thisResource._latestId&lt;newpost.getId() ) {
+        
+            thisResource._latestId=newpost.getId();
+        
+        }
+        
+        if (cbfunc &amp;&amp; signatureVerification=="none") {
+            
+            thisResource._log("no signature verifcation needed");
+          
+            newpost._verified = true;
+          
+            cbfunc(newpost);
+          
+
+        } else {
+        
+			if (cbfunc &amp;&amp; signatureVerification=="background") { 
+              
+              thisResource._log("issuing signature verification in background");
+              
+              cbfunc(newpost); 
+            
+            }
+            
+            var errorfunc = thisResource.getQuerySetting("errorfunc");
+			
+			Freech.getUser(thisResource._name)._doPubKey(function(pubkey){
+
+				pubkey.verifySignature(payload.userpost,payload.sig_userpost,function(verified){
+
+					if (verified) {
+
+						newpost._verified=true;
+                      
+                        if (newpost.isRetwist()) {
+                          
+                          var post_rt = payload.userpost.rt;
+                          var sig_rt = payload.userpost.sig_rt;
+                          
+                          Freech.getUser(post_rt.n)._doPubKey(function(pubkey){
+
+                            pubkey.verifySignature(post_rt,sig_rt,function(verified){
+
+                                if (verified) {
+                                  
+                                  if (cbfunc &amp;&amp; signatureVerification=="instant") {
+                                    cbfunc(newpost); 
+                                  }
+                                  
+                                } else {
+
+                                  errorfunc.call(thisResource,{
+                                    message: "Signature of retwisted post could not be verified.",
+                                    code: 32062
+                                  });
+                                
+                                }
+                              
+                            });
+                            
+                          });
+                          
+                        } else {
+
+						  if (cbfunc &amp;&amp; signatureVerification=="instant") { cbfunc(newpost); }
+                          
+                        }
+
+					} else {
+
+                        errorfunc.call(thisResource,{
+                          message: "Post signature could not be verified.",
+                          code: 32060
+                        });
+
+					}
+
+				});
+
+			});
+				
+		}
+ 
+    } else if(cbfunc) {
+      cbfunc(thisResource._posts[newid]);
+    }
+
+}
+
+FreechStream.prototype._doPost = function (id, cbfunc, querySettings) {
+
+  if (querySettings===undefined) {querySettings={};} 
+  
+  //console.log(querySettings)
+  
+  var Freech = this._scope;
+
+  var thisResource = this;
+  
+  if (id &amp;&amp; id>0) {
+
+    if (id in this._posts){
+
+      cbfunc(this._posts[id])
+
+      this._log("post already in cache");
+
+    } else {
+        
+      thisResource._activeQuerySettings = querySettings;
+      thisResource._updateInProgress = true;
+
+      this._log("post "+id+" not in cache");
+
+      var thisResource = this;
+
+      thisResource.fillCache(id,function(success){
+
+        if (success) {
+
+          thisResource._log("fill cache was successfull")
+          
+          thisResource._activeQuerySettings = {};
+          thisResource._updateInProgress = false;
+
+          cbfunc(thisResource._posts[id])
+
+        } else {
+
+          thisResource.dhtget([thisResource._name, "post"+id, "s"],
+
+            function (result) {
+
+              if (result[0]) {
+            
+                thisResource._verifyAndCachePost(result[0].p.v,cbfunc);
+                
+              } else {
+			
+                thisResource._handleError({
+                  message: "DHT resource is empty.",
+                  code: 32052
+                })
+                thisResource._updateInProgress = false;
+                //cbfunc(null);
+                
+              }
+          
+              thisResource._activeQuerySettings = {};
+              thisResource._updateInProgress = false;
+
+            }
+
+          ); 
+
+        }
+
+      });
+
+    }
+
+  }
+    
+};
+
+FreechStream.prototype._doUntil = function (cbfunc, querySettings) {
+
+  this._checkQueryAndDo(function doUntil(post){
+
+    var retVal = cbfunc(post);
+
+    if( post.getLastId() &amp;&amp; retVal!==false ) { 
+
+      post.doPreviousPost(doUntil, querySettings); 
+
+    }
+
+  }, querySettings);
+	
+}
+
+module.exports = FreechStream;
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechRetwists.html">FreechRetwists</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun May 03 2015 15:37:38 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
