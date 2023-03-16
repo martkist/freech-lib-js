@@ -4,7 +4,7 @@
 
 Freech = require("../src/Freech.js")
 
-Freech.getUser("mfreitas").doMentions(function(mentions){
+Freech.getUser("martkistdevs").doMentions(function(mentions){
   
   for(var i in mentions){
 

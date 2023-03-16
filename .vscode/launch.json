@@ -30,6 +30,33 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/examples/003_query_avatar.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "004_query_mentions",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/004_query_mentions.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "005_query_followings",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/005_query_followings.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "006_error_handling",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/006_error_handling.js"
         }
     ]
 }
