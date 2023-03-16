@@ -396,7 +396,7 @@ FreechAccount.prototype.reply = function (replyusername,replyid,msg,cbfunc) {
 
 }
 
-FreechAccount.prototype.retwist = function (rtusername,rtid,cbfunc) {
+FreechAccount.prototype.refreech = function (rtusername,rtid,cbfunc) {
   
   var thisAccount = this;
     

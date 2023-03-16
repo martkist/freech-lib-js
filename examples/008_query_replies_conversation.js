@@ -3,7 +3,7 @@
  * recursively goes up the conversation thread to find the top post of a public conversation 
  * an displays the post. After that it calls the "doRepliesRecusrive" method that displays all 
  * its replies and the replies of the replies and so on... so in the end we have the full
- * conversation. The setTimeout function is to seperate the retwists request from the 
+ * conversation. The setTimeout function is to seperate the refreechs request from the 
  * conversation request so their outputs do not overlapp
  */
 

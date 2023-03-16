@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "001_query_status_or_post",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/001_query_status_or_post.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "002_query_profile",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/002_query_profile.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "003_query_avatar",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/003_query_avatar.js"
+        }
+    ]
+}

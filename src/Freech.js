@@ -31,9 +31,11 @@ Freech._signatureVerificationsInProgress = 0;
 Freech._outdatedLimit = 45;
 Freech._querySettingsByType = {};
 Freech._logfunc = function(){};
-Freech._host = "http://user:pwd@127.0.0.1:28332";
+Freech._host = "http://user:pwd@127.0.0.1:4032";
 Freech._timeout = 20000;
-Freech._errorfunc = function(error){console.log("Freech error: "+error.message);};
+Freech._errorfunc = function(error) {
+  console.log("Freech error: "+error.message);
+};
 
 Freech._walletType = "server";
 

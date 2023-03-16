@@ -31,7 +31,7 @@ Freech.getUser("martkistdevs").setQuerySettings({outdatedLimit: 60});
 /* 
  * ... or by resource type. The stream resource holds the posts of a user and therefore also 
  * the status. The names of the other resources are: profile, avatar, followings, mentions, 
- * hashtag, pubkey, replies and retwists.
+ * hashtag, pubkey, replies and refreechs.
  */
 
 Freech.setup({

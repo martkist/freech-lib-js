@@ -31927,7 +31927,7 @@ FreechAccount.prototype.reply = function (replyusername,replyid,msg,cbfunc) {
 
 }
 
-FreechAccount.prototype.retwist = function (rtusername,rtid,cbfunc) {
+FreechAccount.prototype.refreech = function (rtusername,rtid,cbfunc) {
   
   var thisAccount = this;
     
@@ -31955,7 +31955,7 @@ FreechAccount.prototype.retwist = function (rtusername,rtid,cbfunc) {
         v,
         0,
         function(result){
-          Freech.getUser(rtusername)._stream._posts[rtid]._retwists._data[newpost.getUsername()+":post"+newpost.getId()]=true;  
+          Freech.getUser(rtusername)._stream._posts[rtid]._refreechs._data[newpost.getUsername()+":post"+newpost.getId()]=true;  
           if(cbfunc) cbfunc(newpost);
         },
         function(error){
@@ -33805,7 +33805,7 @@ FreechAccount.prototype.reply = function (replyusername,replyid,msg,cbfunc) {
 
 }
 
-FreechAccount.prototype.retwist = function (rtusername,rtid,cbfunc) {
+FreechAccount.prototype.refreech = function (rtusername,rtid,cbfunc) {
   
   var thisAccount = this;
     
@@ -34356,7 +34356,7 @@ Freech._signatureVerificationsInProgress = 0;
 Freech._outdatedLimit = 45;
 Freech._querySettingsByType = {};
 Freech._logfunc = function(){};
-Freech._host = "http://user:pwd@127.0.0.1:28332";
+Freech._host = "http://user:pwd@127.0.0.1:4032";
 Freech._timeout = 20000;
 Freech._errorfunc = function(error){console.log("Freech error: "+error.message);};
 
@@ -35290,7 +35290,7 @@ module.exports = FreechMentions;
 var inherits = require('inherits');
 var FreechResource = require('./FreechResource.js');
 var FreechReplies = require('./FreechReplies.js');
-var FreechRetwists = require('./FreechRetwists.js');
+var FreechRefreechs = require('./FreechRefreechs.js');
 
 /**
  * Describes a single post of a {@link FreechUser}.
@@ -35308,7 +35308,7 @@ function FreechPost(data,signature,scope) {
     this._signature = signature;
 	this._isPromotedPost = false;
     this._replies = new FreechReplies(name,id,scope);
-    this._retwists = new FreechRetwists(name,id,scope);
+    this._refreechs = new FreechRefreechs(name,id,scope);
     
 }
 
@@ -35320,7 +35320,7 @@ FreechPost.prototype.flatten = function () {
 
     var flatData = FreechResource.prototype.flatten.call(this);
     
-    flatData.retwists = this._retwists.flatten();
+    flatData.refreechs = this._refreechs.flatten();
     flatData.replies = this._replies.flatten();
   
     flatData.isPromotedPost = this._isPromotedPost;
@@ -35335,7 +35335,7 @@ FreechPost.prototype.inflate = function (flatData) {
     FreechResource.prototype.inflate.call(this,flatData);
     
     this._replies.inflate(flatData.replies);
-    this._retwists.inflate(flatData.retwists);
+    this._refreechs.inflate(flatData.refreechs);
 
     this._signature = flatData.signature;
     this._isPromotedPost = flatData.isPromotedPost;
@@ -35349,8 +35349,8 @@ FreechPost.prototype.trim = function (timestamp) {
   this._replies.trim(timestamp);
   keepPost = keepPost || this._replies.inCache();
 
-  this._retwists.trim(timestamp);
-  keepPost = keepPost || this._retwists.inCache();
+  this._refreechs.trim(timestamp);
+  keepPost = keepPost || this._refreechs.inCache();
 
   if ( !keepPost && ( !timestamp || timestamp > this.getTimestamp() ) ){
 
@@ -35501,90 +35501,90 @@ FreechPost.prototype.doPostRepliedTo = function (cbfunc,querySettings) {
 }
 
 /** @function
- * @name isRetwist 
+ * @name isRefreech 
  * @description returns true if the postis an rewtist.
  */
-FreechPost.prototype.isRetwist = function () {
+FreechPost.prototype.isRefreech = function () {
     return ("rt" in this._data);
 }
 
 /** @function
- * @name isRetwist 
+ * @name isRefreech 
  * @description returns true if the postis an rewtist.
  */
-FreechPost.prototype.isRetwistWithComment = function () {
+FreechPost.prototype.isRefreechWithComment = function () {
     return ("rt" in this._data && "msg" in this._data);
 }
 
 
 /** @function
- * @name getRetwistedId 
- * @description returns the id of the retwisted post.
+ * @name getRefreechedId 
+ * @description returns the id of the refreeched post.
  */
-FreechPost.prototype.getRetwistedId = function () {
+FreechPost.prototype.getRefreechedId = function () {
     return this._data.rt.k;
 }
 
 /** @function
- * @name getRetwistedlastId 
+ * @name getRefreechedlastId 
  * @description returns the last id of the rewisted post.
  */
-FreechPost.prototype.getRetwistedlastId = function () {
+FreechPost.prototype.getRefreechedlastId = function () {
     return this._data.rt.lastk;
 }
 
 /** @function
- * @name getRetwistedTimestamp 
- * @description returns the timestamp of the retwisted post
+ * @name getRefreechedTimestamp 
+ * @description returns the timestamp of the refreeched post
  */
-FreechPost.prototype.getRetwistedTimestamp = function () {
+FreechPost.prototype.getRefreechedTimestamp = function () {
     return this._data.rt.time;
 }
 
 /** @function
- * @name getRetwistedContent 
+ * @name getRefreechedContent 
  * @description returns content of the rwteisted post
  */
-FreechPost.prototype.getRetwistedContent = function () {
+FreechPost.prototype.getRefreechedContent = function () {
     return this._data.rt.msg;
 }
 
 /** @function
- * @name getRetwistedUser 
- * @description returns the username of the retwisted post.
+ * @name getRefreechedUser 
+ * @description returns the username of the refreeched post.
  */
-FreechPost.prototype.getRetwistedUsername = function () {
+FreechPost.prototype.getRefreechedUsername = function () {
     return this._data.rt.n;
 }
 
 /** @function
- * @name doRetwistingPosts 
- * @description calls cbfunc with an array of the post that are retwisting this post.
+ * @name doRefreechingPosts 
+ * @description calls cbfunc with an array of the post that are refreeching this post.
  * @param cbfunc {function} 
  * @param querySettings {Object} 
  */
-FreechPost.prototype.doRetwistingPosts = function (cbfunc,querySettings) {
-    this._retwists._checkQueryAndDo(cbfunc,querySettings);
+FreechPost.prototype.doRefreechingPosts = function (cbfunc,querySettings) {
+    this._refreechs._checkQueryAndDo(cbfunc,querySettings);
 }
 
 
 /** @function
- * @name getRetwistedPost 
- * @description return an uncached and unverified {@link FreechPost} object of the retwisted post.
+ * @name getRefreechedPost 
+ * @description return an uncached and unverified {@link FreechPost} object of the refreeched post.
  * @param cbfunc {function} 
  */
-FreechPost.prototype.getRetwistedPost = function (cbfunc) {
+FreechPost.prototype.getRefreechedPost = function (cbfunc) {
     
     return new FreechPost(this._data.rt,this._data.sig_rt,this._scope);
     
 }
 
 /** @function
- * @name doRetwistedPost 
- * @description Verifies and caches the retwisted post and calls cbfunc with it.
+ * @name doRefreechedPost 
+ * @description Verifies and caches the refreeched post and calls cbfunc with it.
  * @param cbfunc {function} 
  */
-FreechPost.prototype.doRetwistedPost = function (cbfunc) {
+FreechPost.prototype.doRefreechedPost = function (cbfunc) {
     
     var Freech = this._scope;
     
@@ -35607,7 +35607,7 @@ FreechPost.prototype.doRetwistedPost = function (cbfunc) {
     
 }
 
-},{"./FreechReplies.js":202,"./FreechResource.js":203,"./FreechRetwists.js":204,"inherits":98}],199:[function(require,module,exports){
+},{"./FreechReplies.js":202,"./FreechResource.js":203,"./FreechRefreechs.js":204,"inherits":98}],199:[function(require,module,exports){
 var inherits = require('inherits');
 
 var FreechResource = require('./FreechResource.js');
@@ -36631,21 +36631,21 @@ var inherits = require('inherits');
 var FreechResource = require('./FreechResource.js');
 
 /**
- * Describes the retwists of a {@link FreechPost}.
+ * Describes the refreechs of a {@link FreechPost}.
  * @class
  */
-var FreechRetwists = function (name,id,scope) {
+var FreechRefreechs = function (name,id,scope) {
     
     FreechResource.call(this,name,scope);
-    this._type = "retwists";
+    this._type = "refreechs";
     this._id = id;
     this._data = {};
     
 }
 
-inherits(FreechRetwists,FreechResource);
+inherits(FreechRefreechs,FreechResource);
 
-FreechRetwists.prototype.flatten = function () {
+FreechRefreechs.prototype.flatten = function () {
 
     var flatData = FreechResource.prototype.flatten.call(this);
     
@@ -36656,7 +36656,7 @@ FreechRetwists.prototype.flatten = function () {
 
 }
 
-FreechRetwists.prototype.inflate = function (flatData) {
+FreechRefreechs.prototype.inflate = function (flatData) {
     
     FreechResource.prototype.inflate.call(this,flatData);
     
@@ -36664,39 +36664,39 @@ FreechRetwists.prototype.inflate = function (flatData) {
 
 }
 
-FreechRetwists.prototype.trim = function (timestamp) {
+FreechRefreechs.prototype.trim = function (timestamp) {
 
   if (!timestamp || timestamp > this._lastUpdate){
 
     var thisPost = this._scope.getUser(this._name).getPost(this._id);
 
-    var FreechRetwists = require("./FreechRetwists.js");
+    var FreechRefreechs = require("./FreechRefreechs.js");
     
-    thisPost._retwists = new FreechRetwists(this._name,this._id,this._scope);
+    thisPost._refreechs = new FreechRefreechs(this._name,this._id,this._scope);
     
   }
 
 }
 
-FreechRetwists.prototype._do = function (cbfunc) {
+FreechRefreechs.prototype._do = function (cbfunc) {
 	this.doPosts(cbfunc);
 }
 
-FreechRetwists.prototype._queryAndDo = function (cbfunc) {
+FreechRefreechs.prototype._queryAndDo = function (cbfunc) {
     
     var currentCounter = 1;
         
     var Freech = this._scope;
     
-    var thisRetwists = this;
+    var thisRefreechs = this;
     
     var thisUser = Freech.getUser(this._name);
 
-    thisRetwists._data = {};
+    thisRefreechs._data = {};
 
-    thisRetwists._lastUpdate=Date.now()/1000;
+    thisRefreechs._lastUpdate=Date.now()/1000;
         
-    thisRetwists.dhtget([thisUser.getUsername(), "rts"+thisRetwists._id, "m"],
+    thisRefreechs.dhtget([thisUser.getUsername(), "rts"+thisRefreechs._id, "m"],
 
         function (result) {
 
@@ -36707,7 +36707,7 @@ FreechRetwists.prototype._queryAndDo = function (cbfunc) {
                 var username = result[i].p.v.userpost.n;
                 var id = result[i].p.v.userpost.k;
 
-                thisRetwists._data[username+":post"+id]=true;                
+                thisRefreechs._data[username+":post"+id]=true;                
 
                 if (! (id in Freech.getUser(username)._stream._posts ) ) {
                 
@@ -36717,7 +36717,7 @@ FreechRetwists.prototype._queryAndDo = function (cbfunc) {
 
             }
         
-            thisRetwists._do(cbfunc);
+            thisRefreechs._do(cbfunc);
 
         }
                         
@@ -36725,7 +36725,7 @@ FreechRetwists.prototype._queryAndDo = function (cbfunc) {
         
 }
 
-FreechRetwists.prototype.doPosts = function (cbfunc) {
+FreechRefreechs.prototype.doPosts = function (cbfunc) {
 
     var posts = [];
 	
@@ -36742,8 +36742,8 @@ FreechRetwists.prototype.doPosts = function (cbfunc) {
 	cbfunc(posts);
 }
 
-module.exports = FreechRetwists;
-},{"./FreechPost.js":198,"./FreechResource.js":203,"./FreechRetwists.js":204,"inherits":98}],205:[function(require,module,exports){
+module.exports = FreechRefreechs;
+},{"./FreechPost.js":198,"./FreechResource.js":203,"./FreechRefreechs.js":204,"inherits":98}],205:[function(require,module,exports){
 var inherits = require('inherits');
 
 var FreechResource = require('./FreechResource.js');
@@ -36997,7 +36997,7 @@ FreechStream.prototype._verifyAndCachePost =  function (payload,cbfunc) {
 
 						newpost._verified=true;
                       
-                        if (newpost.isRetwist()) {
+                        if (newpost.isRefreech()) {
                           
                           var post_rt = payload.userpost.rt;
                           var sig_rt = payload.userpost.sig_rt;
@@ -37017,7 +37017,7 @@ FreechStream.prototype._verifyAndCachePost =  function (payload,cbfunc) {
                                   newpost.trim();
 
                                   errorfunc.call(thisResource,{
-                                    message: "Signature of retwisted post could not be verified.",
+                                    message: "Signature of refreeched post could not be verified.",
                                     code: 32062
                                   });
                                 

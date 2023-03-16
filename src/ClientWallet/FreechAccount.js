@@ -500,7 +500,7 @@ FreechAccount.prototype.reply = function (replyusername,replyid,msg,cbfunc) {
 
 }
 
-FreechAccount.prototype.retwist = function (rtusername,rtid,cbfunc) {
+FreechAccount.prototype.refreech = function (rtusername,rtid,cbfunc) {
   
   var thisAccount = this;
     
@@ -528,7 +528,7 @@ FreechAccount.prototype.retwist = function (rtusername,rtid,cbfunc) {
         v,
         0,
         function(result){
-          Freech.getUser(rtusername)._stream._posts[rtid]._retwists._data[newpost.getUsername()+":post"+newpost.getId()]=true;  
+          Freech.getUser(rtusername)._stream._posts[rtid]._refreechs._data[newpost.getUsername()+":post"+newpost.getId()]=true;  
           if(cbfunc) cbfunc(newpost);
         },
         function(error){

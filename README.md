@@ -19,7 +19,7 @@ A techdemo of freech-lib-js combined with react-js can be found at http://github
 ------|-----|-----|------|
  Posts     	| ✓     |                          ✓  |	✓						
  Replies     	| ✓     |                      ✓      |	✓						
- Retwists     	| ✓     |                      ✓      |	✓						
+ Refreechs     	| ✓     |                      ✓      |	✓						
  Profile     	| ✓     |                      ✓      |	✓						
  Avatar     	| ✓     |                      ✓      |	✓						
  Followings   	| ✓     |                      ✓      |	✓						
@@ -84,7 +84,7 @@ freech-lib-js passes through all JSON-RPC errors. Internal errors are thrown in 
 * 32052: DHT resource is empty. (Only thrown for status, post, profile and avatar resources.)
 * 32060: Post signature could not be verified.
 * 32061: Public key not available on server.
-* 32062: Signature of retwisted post could not be verified.
+* 32062: Signature of refreeched post could not be verified.
 * 32063: Post could not be decrypted.
 * 32064: Private key is in conflict with public key.
 * 32080: Unsupported wallet type.

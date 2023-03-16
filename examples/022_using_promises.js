@@ -13,8 +13,8 @@ Freech.getUser("martkistdevs").doProfile().then(function(profile){
 
 Freech.getUser("martkistdevs").doPost(34).then(function(post){
     
-	if (post.isRetwist()) {
-      console.log("retwist:"+post.getRetwistedContent())
+	if (post.isRefreech()) {
+      console.log("refreech:"+post.getRefreechedContent())
     } else {
       console.log("normal post:"+post.getContent())
     }

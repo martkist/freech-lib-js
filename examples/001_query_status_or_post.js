@@ -1,7 +1,7 @@
  /*
  * First we need to instantiate the Freech object from the library using require. If you use 
  * the browserified version ("freech-lib.js" file from the main directoy), this is already 
- * done for you. By default the api endpoint is setup as http://user:pwd@127.0.0.1:28332 . 
+ * done for you. By default the api endpoint is setup as http://user:pwd@127.0.0.1:4032 . 
  * So make sure freechd is running localy. Alternatively you can setup a different 
  * host-address by calling Freech.setup({host:"address"}). 
  * 
@@ -13,11 +13,11 @@
  * with the result of the query as argument after the query is completed. So "get" functions
  * return the result and "do" function call a callback with the result.
  * 
- * In this particular example, we test whether the post is a retwist and print out the content 
- * of the post or the content of the retwisted post respectively. 
+ * In this particular example, we test whether the post is a refreech and print out the content 
+ * of the post or the content of the refreeched post respectively. 
  * 
  * Other methods of the post object are: getUsername(), getTimestamp(), isReply(), 
- * getReplyId(), getReplyUsername(), getRetwistedUsername(), getId(), getLastId(). 
+ * getReplyId(), getReplyUsername(), getRefreechedUsername(), getId(), getLastId(). 
  * Add some of them to the print commands. 
  */
 
@@ -25,8 +25,8 @@ Freech = require("../src/Freech.js")
 
 Freech.getUser("martkistdevs").doStatus(function(post){
   
-  if (post.isRetwist()) {
-    console.log("retwist:"+post.getRetwistedContent())
+  if (post.isRefreech()) {
+    console.log("refreech:"+post.getRefreechedContent())
   } else {
     console.log("normal post:"+post.getContent())
   }
@@ -39,10 +39,10 @@ Freech.getUser("martkistdevs").doStatus(function(post){
  * doPost(...) function of the user:
  */
 
-Freech.getUser("martkistdevs").doPost(34,function(post){
+Freech.getUser("martkistdevs").doPost(1,function(post){
     
-	if (post.isRetwist()) {
-      console.log("retwist:"+post.getRetwistedContent())
+	if (post.isRefreech()) {
+      console.log("refreech:"+post.getRefreechedContent())
     } else {
       console.log("normal post:"+post.getContent())
     }

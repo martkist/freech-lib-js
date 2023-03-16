@@ -28,11 +28,11 @@ Freech.loadServerAccounts(function(){
 
       });
       
-      Freech.getAccount("timbuktu").retwist("martkistdevs",34,function(post){
+      Freech.getAccount("timbuktu").refreech("martkistdevs",34,function(post){
         
           Freech.getUser("timbuktu").doStatus(function(){
             
-            console.log(post.getRetwistedContent())
+            console.log(post.getRefreechedContent())
             
           });
 

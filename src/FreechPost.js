@@ -3,7 +3,7 @@
 var inherits = require('inherits');
 var FreechResource = require('./FreechResource.js');
 var FreechReplies = require('./FreechReplies.js');
-var FreechRetwists = require('./FreechRetwists.js');
+var FreechRefreechs = require('./FreechRefreechs.js');
 
 /**
  * Describes a single post of a {@link FreechUser}.
@@ -21,7 +21,7 @@ function FreechPost(data,signature,scope) {
     this._signature = signature;
 	this._isPromotedPost = false;
     this._replies = new FreechReplies(name,id,scope);
-    this._retwists = new FreechRetwists(name,id,scope);
+    this._refreechs = new FreechRefreechs(name,id,scope);
     
 }
 
@@ -33,7 +33,7 @@ FreechPost.prototype.flatten = function () {
 
     var flatData = FreechResource.prototype.flatten.call(this);
     
-    flatData.retwists = this._retwists.flatten();
+    flatData.refreechs = this._refreechs.flatten();
     flatData.replies = this._replies.flatten();
   
     flatData.isPromotedPost = this._isPromotedPost;
@@ -48,7 +48,7 @@ FreechPost.prototype.inflate = function (flatData) {
     FreechResource.prototype.inflate.call(this,flatData);
     
     this._replies.inflate(flatData.replies);
-    this._retwists.inflate(flatData.retwists);
+    this._refreechs.inflate(flatData.refreechs);
 
     this._signature = flatData.signature;
     this._isPromotedPost = flatData.isPromotedPost;
@@ -62,8 +62,8 @@ FreechPost.prototype.trim = function (timestamp) {
   this._replies.trim(timestamp);
   keepPost = keepPost || this._replies.inCache();
 
-  this._retwists.trim(timestamp);
-  keepPost = keepPost || this._retwists.inCache();
+  this._refreechs.trim(timestamp);
+  keepPost = keepPost || this._refreechs.inCache();
 
   if ( !keepPost && ( !timestamp || timestamp > this.getTimestamp() ) ){
 
@@ -214,90 +214,90 @@ FreechPost.prototype.doPostRepliedTo = function (cbfunc,querySettings) {
 }
 
 /** @function
- * @name isRetwist 
+ * @name isRefreech 
  * @description returns true if the postis an rewtist.
  */
-FreechPost.prototype.isRetwist = function () {
+FreechPost.prototype.isRefreech = function () {
     return ("rt" in this._data);
 }
 
 /** @function
- * @name isRetwist 
+ * @name isRefreech 
  * @description returns true if the postis an rewtist.
  */
-FreechPost.prototype.isRetwistWithComment = function () {
+FreechPost.prototype.isRefreechWithComment = function () {
     return ("rt" in this._data && "msg" in this._data);
 }
 
 
 /** @function
- * @name getRetwistedId 
- * @description returns the id of the retwisted post.
+ * @name getRefreechedId 
+ * @description returns the id of the refreeched post.
  */
-FreechPost.prototype.getRetwistedId = function () {
+FreechPost.prototype.getRefreechedId = function () {
     return this._data.rt.k;
 }
 
 /** @function
- * @name getRetwistedlastId 
+ * @name getRefreechedlastId 
  * @description returns the last id of the rewisted post.
  */
-FreechPost.prototype.getRetwistedlastId = function () {
+FreechPost.prototype.getRefreechedlastId = function () {
     return this._data.rt.lastk;
 }
 
 /** @function
- * @name getRetwistedTimestamp 
- * @description returns the timestamp of the retwisted post
+ * @name getRefreechedTimestamp 
+ * @description returns the timestamp of the refreeched post
  */
-FreechPost.prototype.getRetwistedTimestamp = function () {
+FreechPost.prototype.getRefreechedTimestamp = function () {
     return this._data.rt.time;
 }
 
 /** @function
- * @name getRetwistedContent 
+ * @name getRefreechedContent 
  * @description returns content of the rwteisted post
  */
-FreechPost.prototype.getRetwistedContent = function () {
+FreechPost.prototype.getRefreechedContent = function () {
     return this._data.rt.msg;
 }
 
 /** @function
- * @name getRetwistedUser 
- * @description returns the username of the retwisted post.
+ * @name getRefreechedUser 
+ * @description returns the username of the refreeched post.
  */
-FreechPost.prototype.getRetwistedUsername = function () {
+FreechPost.prototype.getRefreechedUsername = function () {
     return this._data.rt.n;
 }
 
 /** @function
- * @name doRetwistingPosts 
- * @description calls cbfunc with an array of the post that are retwisting this post.
+ * @name doRefreechingPosts 
+ * @description calls cbfunc with an array of the post that are refreeching this post.
  * @param cbfunc {function} 
  * @param querySettings {Object} 
  */
-FreechPost.prototype.doRetwistingPosts = function (cbfunc,querySettings) {
-    this._retwists._checkQueryAndDo(cbfunc,querySettings);
+FreechPost.prototype.doRefreechingPosts = function (cbfunc,querySettings) {
+    this._refreechs._checkQueryAndDo(cbfunc,querySettings);
 }
 
 
 /** @function
- * @name getRetwistedPost 
- * @description return an uncached and unverified {@link FreechPost} object of the retwisted post.
+ * @name getRefreechedPost 
+ * @description return an uncached and unverified {@link FreechPost} object of the refreeched post.
  * @param cbfunc {function} 
  */
-FreechPost.prototype.getRetwistedPost = function (cbfunc) {
+FreechPost.prototype.getRefreechedPost = function (cbfunc) {
     
     return new FreechPost(this._data.rt,this._data.sig_rt,this._scope);
     
 }
 
 /** @function
- * @name doRetwistedPost 
- * @description Verifies and caches the retwisted post and calls cbfunc with it.
+ * @name doRefreechedPost 
+ * @description Verifies and caches the refreeched post and calls cbfunc with it.
  * @param cbfunc {function} 
  */
-FreechPost.prototype.doRetwistedPost = function (cbfunc) {
+FreechPost.prototype.doRefreechedPost = function (cbfunc) {
     
     var Freech = this._scope;
     

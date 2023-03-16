@@ -3,21 +3,21 @@ var inherits = require('inherits');
 var FreechResource = require('./FreechResource.js');
 
 /**
- * Describes the retwists of a {@link FreechPost}.
+ * Describes the refreechs of a {@link FreechPost}.
  * @class
  */
-var FreechRetwists = function (name,id,scope) {
+var FreechRefreechs = function (name,id,scope) {
     
     FreechResource.call(this,name,scope);
-    this._type = "retwists";
+    this._type = "refreechs";
     this._id = id;
     this._data = {};
     
 }
 
-inherits(FreechRetwists,FreechResource);
+inherits(FreechRefreechs,FreechResource);
 
-FreechRetwists.prototype.flatten = function () {
+FreechRefreechs.prototype.flatten = function () {
 
     var flatData = FreechResource.prototype.flatten.call(this);
     
@@ -28,7 +28,7 @@ FreechRetwists.prototype.flatten = function () {
 
 }
 
-FreechRetwists.prototype.inflate = function (flatData) {
+FreechRefreechs.prototype.inflate = function (flatData) {
     
     FreechResource.prototype.inflate.call(this,flatData);
     
@@ -36,39 +36,39 @@ FreechRetwists.prototype.inflate = function (flatData) {
 
 }
 
-FreechRetwists.prototype.trim = function (timestamp) {
+FreechRefreechs.prototype.trim = function (timestamp) {
 
   if (!timestamp || timestamp > this._lastUpdate){
 
     var thisPost = this._scope.getUser(this._name).getPost(this._id);
 
-    var FreechRetwists = require("./FreechRetwists.js");
+    var FreechRefreechs = require("./FreechRefreechs.js");
     
-    thisPost._retwists = new FreechRetwists(this._name,this._id,this._scope);
+    thisPost._refreechs = new FreechRefreechs(this._name,this._id,this._scope);
     
   }
 
 }
 
-FreechRetwists.prototype._do = function (cbfunc) {
+FreechRefreechs.prototype._do = function (cbfunc) {
 	this.doPosts(cbfunc);
 }
 
-FreechRetwists.prototype._queryAndDo = function (cbfunc) {
+FreechRefreechs.prototype._queryAndDo = function (cbfunc) {
     
     var currentCounter = 1;
         
     var Freech = this._scope;
     
-    var thisRetwists = this;
+    var thisRefreechs = this;
     
     var thisUser = Freech.getUser(this._name);
 
-    thisRetwists._data = {};
+    thisRefreechs._data = {};
 
-    thisRetwists._lastUpdate=Date.now()/1000;
+    thisRefreechs._lastUpdate=Date.now()/1000;
         
-    thisRetwists.dhtget([thisUser.getUsername(), "rts"+thisRetwists._id, "m"],
+    thisRefreechs.dhtget([thisUser.getUsername(), "rts"+thisRefreechs._id, "m"],
 
         function (result) {
 
@@ -79,7 +79,7 @@ FreechRetwists.prototype._queryAndDo = function (cbfunc) {
                 var username = result[i].p.v.userpost.n;
                 var id = result[i].p.v.userpost.k;
 
-                thisRetwists._data[username+":post"+id]=true;                
+                thisRefreechs._data[username+":post"+id]=true;                
 
                 if (! (id in Freech.getUser(username)._stream._posts ) ) {
                 
@@ -89,7 +89,7 @@ FreechRetwists.prototype._queryAndDo = function (cbfunc) {
 
             }
         
-            thisRetwists._do(cbfunc);
+            thisRefreechs._do(cbfunc);
 
         }
                         
@@ -97,7 +97,7 @@ FreechRetwists.prototype._queryAndDo = function (cbfunc) {
         
 }
 
-FreechRetwists.prototype.doPosts = function (cbfunc) {
+FreechRefreechs.prototype.doPosts = function (cbfunc) {
 
     var posts = [];
 	
@@ -114,4 +114,4 @@ FreechRetwists.prototype.doPosts = function (cbfunc) {
 	cbfunc(posts);
 }
 
-module.exports = FreechRetwists;
+module.exports = FreechRefreechs;

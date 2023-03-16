@@ -223,6 +223,7 @@ FreechResource.prototype.RPC = function (method, params, resultFunc, errorFunc) 
     } else {
                     
         var request = require('request');
+        var requestBody = '{"jsonrpc": "2.0", "method": "'+method+'", "params": '+JSON.stringify(params)+', "id": 0}';
         request({
           
             uri: thisResource.getQuerySetting("host"),
@@ -230,9 +231,9 @@ FreechResource.prototype.RPC = function (method, params, resultFunc, errorFunc) 
             timeout: thisResource.getQuerySetting("timeout"),
             followRedirect: true,
             maxRedirects: 10,
-            body: '{"jsonrpc": "2.0", "method": "'+method+'", "params": '+JSON.stringify(params)+', "id": 0}'
+            body: requestBody
           
-        }, function(error, response, body) {
+        }, function(error, response, responseBody) {
             
             if (error) { 
 				                
@@ -245,7 +246,8 @@ FreechResource.prototype.RPC = function (method, params, resultFunc, errorFunc) 
 			} else {
               
               if (response.statusCode<200 || response.statusCode>299) {
-                    
+                    console.debug("request: %o", requestBody);
+                    console.debug("response: %o", responseBody);
                   thisResource._handleError({
                     message: "Request was not processed successfully (http error: "+response.statusCode+").",
                     data: response.statusCode,
@@ -256,7 +258,7 @@ FreechResource.prototype.RPC = function (method, params, resultFunc, errorFunc) 
               
                 try {
                   
-                  var res = JSON.parse(body);
+                  var res = JSON.parse(responseBody);
                   
                   
                 } catch (err) {

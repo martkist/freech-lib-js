@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: FreechRetwists.js</title>
+    <title>JSDoc: Source: FreechRefreechs.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: FreechRetwists.js</h1>
+    <h1 class="page-title">Source: FreechRefreechs.js</h1>
 
     
 
@@ -31,21 +31,21 @@
 var FreechResource = require('./FreechResource.js');
 
 /**
- * Describes the retwists of a {@link FreechPost}.
+ * Describes the refreechs of a {@link FreechPost}.
  * @class
  */
-FreechRetwists = function (name,id,scope) {
+FreechRefreechs = function (name,id,scope) {
     
     FreechResource.call(this,name,scope);
-    this._type = "retwists";
+    this._type = "refreechs";
     this._id = id;
     this._data = {};
     
 }
 
-inherits(FreechRetwists,FreechResource);
+inherits(FreechRefreechs,FreechResource);
 
-FreechRetwists.prototype.flatten = function () {
+FreechRefreechs.prototype.flatten = function () {
 
     var flatData = FreechResource.prototype.flatten.call(this);
     
@@ -56,7 +56,7 @@ FreechRetwists.prototype.flatten = function () {
 
 }
 
-FreechRetwists.prototype.inflate = function (flatData) {
+FreechRefreechs.prototype.inflate = function (flatData) {
     
     FreechResource.prototype.inflate.call(this,flatData);
     
@@ -64,25 +64,25 @@ FreechRetwists.prototype.inflate = function (flatData) {
 
 }
 
-FreechRetwists.prototype._do = function (cbfunc) {
+FreechRefreechs.prototype._do = function (cbfunc) {
 	this.doPosts(cbfunc);
 }
 
-FreechRetwists.prototype._queryAndDo = function (cbfunc) {
+FreechRefreechs.prototype._queryAndDo = function (cbfunc) {
     
     var currentCounter = 1;
         
     var Freech = this._scope;
     
-    var thisRetwists = this;
+    var thisRefreechs = this;
     
     var thisUser = Freech.getUser(this._name);
 
-    thisRetwists._data = {};
+    thisRefreechs._data = {};
 
-    thisRetwists._lastUpdate=Date.now()/1000;
+    thisRefreechs._lastUpdate=Date.now()/1000;
         
-    thisRetwists.dhtget([thisUser.getUsername(), "rts"+thisRetwists._id, "m"],
+    thisRefreechs.dhtget([thisUser.getUsername(), "rts"+thisRefreechs._id, "m"],
 
         function (result) {
 
@@ -93,7 +93,7 @@ FreechRetwists.prototype._queryAndDo = function (cbfunc) {
                 var username = result[i].p.v.userpost.n;
                 var id = result[i].p.v.userpost.k;
 
-                thisRetwists._data[username+":post"+id]=true;                
+                thisRefreechs._data[username+":post"+id]=true;                
 
                 if (! (id in Freech.getUser(username)._stream._posts ) ) {
                 
@@ -103,7 +103,7 @@ FreechRetwists.prototype._queryAndDo = function (cbfunc) {
 
             }
         
-            thisRetwists._do(cbfunc);
+            thisRefreechs._do(cbfunc);
 
         }
                         
@@ -111,7 +111,7 @@ FreechRetwists.prototype._queryAndDo = function (cbfunc) {
         
 }
 
-FreechRetwists.prototype.doPosts = function (cbfunc) {
+FreechRefreechs.prototype.doPosts = function (cbfunc) {
 
     var posts = [];
 	
@@ -128,7 +128,7 @@ FreechRetwists.prototype.doPosts = function (cbfunc) {
 	cbfunc(posts);
 }
 
-module.exports = FreechRetwists;</code></pre>
+module.exports = FreechRefreechs;</code></pre>
         </article>
     </section>
 
@@ -138,7 +138,7 @@ module.exports = FreechRetwists;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechRetwists.html">FreechRetwists</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechRefreechs.html">FreechRefreechs</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
 </nav>
 
 <br class="clear">

@@ -251,7 +251,7 @@ FreechStream.prototype._verifyAndCachePost =  function (payload,cbfunc) {
 
 						newpost._verified=true;
                       
-                        if (newpost.isRetwist()) {
+                        if (newpost.isRefreech()) {
                           
                           var post_rt = payload.userpost.rt;
                           var sig_rt = payload.userpost.sig_rt;
@@ -271,7 +271,7 @@ FreechStream.prototype._verifyAndCachePost =  function (payload,cbfunc) {
                                   newpost.trim();
 
                                   errorfunc.call(thisResource,{
-                                    message: "Signature of retwisted post could not be verified.",
+                                    message: "Signature of refreeched post could not be verified.",
                                     code: 32062
                                   });
                                 
