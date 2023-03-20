@@ -57,6 +57,105 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/examples/006_error_handling.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "007_outdatedLimit_repeated_queries",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/007_outdatedLimit_repeated_queries.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "008_query_replies_conversation",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/008_query_replies_conversation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "009_query_refreechs",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/009_query_refreechs.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "010_query_hashtag",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/010_query_hashtag.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "011_query_timeline",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/011_query_timeline.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "012_query_promotedposts",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/012_query_promotedposts.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "013_query_home_torrents",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/013_query_home_torrents.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "014_check_signature",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/014_check_signature.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "015_serialize_deserialize_cache",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/015_serialize_deserialize_cache.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "016_update_profile_avatar",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/016_update_profile_avatar.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "017_create_new_post",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/017_create_new_post.js"
         }
     ]
 }

@@ -11,7 +11,7 @@ Freech = require("../src/Freech.js")
 
 var count = 1
 
-Freech.getUser("avatarx").doLatestPostsUntil(function(post){
+Freech.getUser("martkistdevs").doLatestPostsUntil(function(post){
 	console.log(post.getContent())
     if (count++==20) {return false;}
 });

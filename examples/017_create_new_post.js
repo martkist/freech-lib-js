@@ -8,29 +8,29 @@ Freech = require("../src/Freech.js");
 
 Freech.loadServerAccounts(function(){
 	
-	Freech.getAccount("timbuktu").activateTorrents(function(){
+	Freech.getAccount("frimbuktu").activateTorrents(function(){
       
-      Freech.getAccount("timbuktu").post(
+      Freech.getAccount("frimbuktu").post(
         "test post from node using freech-lib-js",function(post){
 
-          Freech.getUser("timbuktu").doStatus(function(){
+          Freech.getUser("frimbuktu").doStatus(function(){
             console.log(post.getContent())
           });
 
       });
       
-      Freech.getAccount("timbuktu").reply("martkistdevs",34,
+      Freech.getAccount("frimbuktu").reply("martkistdevs",1,
         "test reply from node using freech-lib-js",function(post){
         
-          Freech.getUser("timbuktu").doStatus(function(){
+          Freech.getUser("frimbuktu").doStatus(function(){
             console.log(post.getContent())
           });
 
       });
       
-      Freech.getAccount("timbuktu").refreech("martkistdevs",34,function(post){
+      Freech.getAccount("frimbuktu").refreech("martkistdevs",1,function(post){
         
-          Freech.getUser("timbuktu").doStatus(function(){
+          Freech.getUser("frimbuktu").doStatus(function(){
             
             console.log(post.getRefreechedContent())
             

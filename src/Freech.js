@@ -446,12 +446,16 @@ Freech.deserializeCache = function (flatData) {
 
         Freech.setup(flatData.options);
         
-        if (Freech._walletType=="server") {
+        if (Freech._walletType=="server")
+        {
             var FreechAccount = require('./ServerWallet/FreechAccount.js');
         } 
-        if (Freech._walletType=="client") {
+        else if (Freech._walletType=="client") 
+        {
             var FreechAccount = require('./ClientWallet/FreechAccount.js');
-        }else {
+        }
+        else 
+        {
             Freech._handleError({
               message: "Unsupported wallet type.",
               code: 32080

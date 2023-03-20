@@ -21,12 +21,6 @@ Freech.getUser("martkistdevs").doStatus(function(post){
     
 },{outdatedLimit: 60});
 
-/* 
- * It can also be set per user ....
- */
-
-Freech.getUser("martkistdevs").setQuerySettings({outdatedLimit: 60});
-
 
 /* 
  * ... or by resource type. The stream resource holds the posts of a user and therefore also 

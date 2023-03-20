@@ -5,11 +5,11 @@
 
 Freech = require("../src/Freech.js");
 
-Freech.getUser("hn").doPost(13670,function(post){
+Freech.getUser("martkistdevs").doPost(1,function(post){
   
   post.doRefreechingPosts(function(refreechs){
 
-      console.log("refreechs of hn:post13670")
+      console.log("refreechs of martkistdevs:1")
       
       for (var i in refreechs) {
 

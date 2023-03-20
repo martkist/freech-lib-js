@@ -13,7 +13,7 @@ Freech.setup({signatureVerification:"instant"})
 
 var cacheStore = "";
 
-Freech.getUser("martkistdevs").doPost(34,function(post){
+Freech.getUser("martkistdevs").doPost(1,function(post){
     
   console.log("got post. storing cache.")
 
@@ -32,7 +32,7 @@ setTimeout(function(){
 
   Freech._userCache = {};
   
-  if (Freech.getUser("martkistdevs").getPost(34)==null) {
+  if (Freech.getUser("martkistdevs").getPost(1)==null) {
 
     console.log("post is gone. cache is empty.")
 
@@ -49,7 +49,7 @@ setTimeout(function(){
 
   Freech.deserializeCache(JSON.parse(cacheStore));
 
-  var post = Freech.getUser("martkistdevs").getPost(34);
+  var post = Freech.getUser("martkistdevs").getPost(1);
   
   if (post) {
 

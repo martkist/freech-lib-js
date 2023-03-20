@@ -5,7 +5,7 @@
 
 Freech = require("../src/Freech.js");
 
-Freech.doHashtagPosts("news",function(posts){
+Freech.doHashtagPosts("martkist",function(posts){
   
   for (var i in posts) {
   

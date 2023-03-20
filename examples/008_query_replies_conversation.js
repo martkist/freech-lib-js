@@ -36,6 +36,4 @@ var doRepliesRecursive = function (replies) {
 
 };
 
-console.log("full conversation of black_puppydog:post729")
-
-Freech.getUser("ulrichard").doPost(270,goUpConversation);
+Freech.getUser("martkistdevs").doPost(1,goUpConversation);

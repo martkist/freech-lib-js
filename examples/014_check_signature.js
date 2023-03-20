@@ -16,7 +16,11 @@ Freech.setup({signatureVerification: "instant"});
 
 var martkistdevs = Freech.getUser("martkistdevs");
 
-var payload = JSON.parse(' {"sig_userpost":"1fd6d2b6f87d247f84dd18dae0fda5cdd867bba9d16a564222bf9d3e7fbc2c761cc828c3e0667284b265cb1ea19c82ef6b96517b5b39989184861c8f32897e6cfa","userpost":{"height":81729,"k":38,"lastk":35,"msg":"@arco That looks really nice!","n":"martkistdevs","reply":{"k":37,"n":"arco"},"time":1428653527}}');
+var payload = JSON.parse('\
+{\
+    "sig_userpost":"20768add906caba659a17cde985da0462287430a1a45e4dfab77e03747aef9f9e9311534f9a02ed74ec5bb49863cc2db8343c316cd091f598b99832270159e6d13",\
+    "userpost":{"height":12439,"k":6,"msg":"Messing with some codes 😎","n":"martkistdevs","time":1679349708}\
+}');
 
 Freech.getUser("martkistdevs")._stream._verifyAndCachePost(payload,function(post){
     
