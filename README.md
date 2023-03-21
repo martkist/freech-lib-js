@@ -13,6 +13,8 @@ freech-lib-js should be compilable for as many platforms as possible including:
 
 A techdemo of freech-lib-js combined with react-js can be found at http://github.com/martkist/freech-react
 
+Forked from https://github.com/Tschaul/twister-lib-js by Julian Steinwachs.
+
 ## Implementation Status
 
  Resource | query | manipulate (client side wallet) | manipulate (server side wallet) 
