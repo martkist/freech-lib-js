@@ -33,6 +33,9 @@
  * @module
  */
 
+var Bitcoin = require('bitcoinjs-lib');
+var freech_network = Bitcoin.networks.bitcoin;
+freech_network.messagePrefix= '\x18freech Signed Message:\n';
 
 var FreechResource = require("./FreechResource.js");
 var Freech = new FreechResource("freech",{});
@@ -58,7 +61,9 @@ Freech._querySettingsByType = {};
 Freech._logfunc = function(){};
 Freech._host = "http://user:pwd@127.0.0.1:4032";
 Freech._timeout = 20000;
-Freech._errorfunc = function(error){console.log("Freech error: "+error.message);};
+Freech._errorfunc = function(error) {
+  console.log("Freech error: "+error.message);
+};
 
 Freech._walletType = "server";
 
@@ -86,9 +91,15 @@ Freech.setup = function (options) {
     		Freech["_"+key] = options[key];
 			
 		}
-		
+	
 	}
 
+}
+
+Freech.getQuerySetting = function(key){
+  if(availableOptions.indexOf(key)>-1){
+    return Freech["_"+key];
+  }
 }
 
 /** @function
@@ -178,7 +189,7 @@ Freech.getAccounts = function () {
   var res = [];
   
   for (var acc in Freech._wallet) {
-    res.push(acc);
+    res.push(Freech._wallet[acc]);
   }
   
   return res;
@@ -223,6 +234,193 @@ Freech.loadServerAccounts = function (cbfunc) {
 
 	});
 
+}
+
+/** @function
+ * @name importClientSideAccount 
+ * @description imports an account into client side wallet. The private key is not send to any server. 
+ */
+Freech.importClientSideAccount = function (name,key,cbfunc) {
+	
+  var FreechAccount = require('./ClientWallet/FreechAccount.js');
+
+  Freech._wallet[name] = new FreechAccount(name,Freech);
+
+  Freech._wallet[name]._privkey.setKey(key)
+  Freech._wallet[name]._privkey.verifyKey(function(key){
+
+    if(key.getStatus()=="confirmed"){
+      
+      if(cbfunc) cbfunc(Freech._wallet[name])
+      
+    }else{
+      
+      Freech._handleError({
+        message: "Private key is in conflict with public key.",
+        code: 32064
+      })
+      
+    }
+    
+    
+  })
+  
+}
+
+/** @function
+ * @name importClientSideAccount 
+ * @description imports an account into client side wallet. The private key is not send to any server. 
+ */
+Freech.importClientSideAccountFromEncryptedKey = function (name,encryptedKey,passphrase,cbfunc) {
+	
+  var FreechAccount = require('./ClientWallet/FreechAccount.js');
+
+  Freech._wallet[name] = new FreechAccount(name,Freech);
+
+  Freech._wallet[name]._privkey.decryptAndImportPrivateKey(encryptedKey,passphrase,function(){
+    
+    Freech._wallet[name]._privkey.verifyKey(function(key){
+
+      if(key.getStatus()=="confirmed"){
+
+        if(cbfunc) cbfunc(Freech._wallet[name])
+
+      }else{
+
+        Freech._handleError({
+          message: "Private key is in conflict with public key.",
+          code: 32064
+        })
+
+      }
+
+
+    })
+    
+  })
+  
+  
+}
+
+
+/** @function
+ * @name generateServerSideAccount
+ * @descriptions makes a rpc request and creates an account &amp; recieves key pair from a freech server.
+ */
+
+ Freech.generateServerSideAccount =  function (name,cbfunc) {
+
+     var FreechAccount = require('./ServerWallet/FreechAccount.js');
+     Freech._wallet[name] = new FreechAccount(name,Freech);
+
+     this.checkUsernameAvailable(name, function(AccountAvailability) { 
+
+	     if (AccountAvailability)
+	     {
+	        //console.log ("creating account");
+     
+		 Freech._wallet[name].createUser(name, cbfunc);
+		 
+	     } 
+     }) 
+}
+
+/*
+ * @name publishServerSideAccount
+ * @descriptions publishes a user from the local wallet onto the freech network
+ */
+
+Freech.publishServerSideAccount = function (name,cbfunc) {
+
+     var FreechAccount = require('./ServerWallet/FreechAccount.js');
+     Freech._wallet[name] = new FreechAccount(name,Freech);
+     Freech._wallet[name].propagateUser(name, function(result){ return result});
+}
+
+/** @function
+ * @name generateClientSideAccount 
+ * @description generate an account in the client side wallet. The private key is not send to any server. 
+ */
+Freech.generateClientSideAccount = function (name,cbfunc) {
+	
+  var FreechAccount = require('./ClientWallet/FreechAccount.js');
+
+  Freech._wallet[name] = new FreechAccount(name,Freech);
+
+  var newAccount = Freech._wallet[name];
+  
+  newAccount._privkey.makeRandomKey()
+  newAccount._privkey.verifyKey(function(){
+
+    var pubkey = newAccount._privkey.getPubKey();
+    
+    Freech.RPC("createrawtransaction",[name,pubkey],function(raw){
+      
+      console.log("raw transaction: ",raw);
+      
+      Freech.RPC("sendrawtransaction",[raw],function(res){
+        
+        console.log("sent transaction",res);
+      
+        var freechPubKey = Freech.getUser(name)._pubkey
+        
+        freechPubKey._lastUpdate = Date.now()/1000;
+
+        freechPubKey._data = pubkey;
+
+        freechPubKey._btcKey = Bitcoin.ECPair.fromPublicKeyBuffer(new Buffer(pubkey,"hex"),freech_network);
+        
+        var freechStream= Freech.getUser(name)._stream
+        
+        freechPubKey._lastUpdate = Date.now()/1000;
+
+        freechPubKey._latestId = 0;
+        
+        if(cbfunc) cbfunc(newAccount)
+        
+      },function(err){
+      console.log("error",err);
+      })
+    },function(err){
+      console.log("error",err);
+    })
+    
+    
+  })
+  
+}
+
+/** @function
+ * @name checkUsernameAvailable 
+ * @description checks if username is available by querying for its public key.
+ */
+Freech.checkUsernameAvailable = function(username,cbfunc){
+  
+  Freech.RPC("dumppubkey",[username],function(pubkey){
+          
+    if(pubkey.length){
+      //console.log( "key found " + pubkey);
+      cbfunc(false);
+    }else{
+      //console.log("no key found " + pubkey)
+      cbfunc(true);
+    }
+    
+  },function(error){
+    
+  });
+  
+}
+
+
+/** @function
+ * @name checkUsernameAvailable 
+ * @description checks if username is available by querying for its public key.
+ */
+Freech.removeAccount = function(username){
+  
+  delete Freech._wallet[username];
+  
 }
 
 /** @function
@@ -276,9 +474,16 @@ Freech.deserializeCache = function (flatData) {
 
         Freech.setup(flatData.options);
         
-        if (Freech._walletType=="server") {
+        if (Freech._walletType=="server")
+        {
             var FreechAccount = require('./ServerWallet/FreechAccount.js');
-        } else {
+        } 
+        else if (Freech._walletType=="client") 
+        {
+            var FreechAccount = require('./ClientWallet/FreechAccount.js');
+        }
+        else 
+        {
             Freech._handleError({
               message: "Unsupported wallet type.",
               code: 32080
@@ -320,6 +525,68 @@ Freech.deserializeCache = function (flatData) {
     
 }
 
+Freech.trimCache = function (timestamp) {
+    
+  for (var username in this._userCache){
+      this._userCache[username].trim(timestamp);
+  }
+
+  for (var username in this._wallet){
+      this._wallet[username].trim(timestamp);
+  }
+
+  for (var tag in this._hashtags){
+      this._hashtags[tag].trim(timestamp);
+  }
+  
+  this._promotedPosts.trim(timestamp);
+
+}
+
+Freech._activeQueryIds = {};
+
+Freech.raiseQueryId = function (id) {
+
+  console.log("raise id ",id)
+  
+  if (id) {
+    if(!Freech._activeQueryIds[id]){
+      Freech._activeQueryIds[id]={func:null,count:1};
+    }else{
+      Freech._activeQueryIds[id].count++;
+    }
+  }
+
+}
+
+Freech.bumpQueryId = function (id) {
+    
+  console.log("bump id ",id)
+  
+  if (id) {
+    Freech._activeQueryIds[id].count--;
+    if (Freech._activeQueryIds[id].count==0) {
+      if (Freech._activeQueryIds[id].func) { 
+        Freech._activeQueryIds[id].func(); 
+      }
+      delete Freech._activeQueryIds[id];
+    }
+  }
+  
+}
+
+Freech.onQueryComplete = function (id, cbfunc){
+  
+  console.log("complete id ",id)
+  
+  if(!Freech._activeQueryIds[id]){
+    Freech._activeQueryIds[id]={func:cbfunc,count:0};
+  }else{
+    Freech._activeQueryIds[id].func=cbfunc;
+  }
+
+}
+
 module.exports = Freech;
 </code></pre>
         </article>
@@ -331,13 +598,13 @@ module.exports = Freech;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechRefreechs.html">FreechRefreechs</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechRefreechs.html">FreechRefreechs</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun May 03 2015 15:37:38 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Mar 21 2023 10:07:13 GMT+0200 (South Africa Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

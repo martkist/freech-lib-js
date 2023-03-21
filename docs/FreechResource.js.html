@@ -38,6 +38,8 @@ function FreechResource (name,scope) {
     this._scope = scope;
     this._name = name;
 	this._hasParentUser = true;
+  
+    this._stash = null;
 	
     this._data = null;
     this._verified = false;
@@ -105,8 +107,9 @@ FreechResource.prototype._checkQueryAndDo = function (cbfunc,querySettings) {
         
     if (!thisResource._updateInProgress) {
         
-        thisResource._activeQuerySettings = querySettings;
+        thisResource._activeQuerySettings = JSON.parse(JSON.stringify(querySettings));
         thisResource._updateInProgress = true;
+        if(thisResource._activeQuerySettings["queryId"]) Freech.raiseQueryId(thisResource._activeQuerySettings["queryId"]);
 
         var outdatedTimestamp = 0;
       
@@ -118,17 +121,19 @@ FreechResource.prototype._checkQueryAndDo = function (cbfunc,querySettings) {
             
             thisResource._log("resource present in cache");
           
+            if(thisResource._activeQuerySettings["queryId"]) Freech.bumpQueryId(thisResource._activeQuerySettings["queryId"]);
             thisResource._activeQuerySettings = {};
             thisResource._updateInProgress = false;
 
         } else {
+              
+            thisResource._log("resource not in cache. querying");
             
             thisResource._queryAndDo(function(newresource){
                 
                 thisResource._do(cbfunc);
-              
-                thisResource._log("resource not in cahce. querying");
                 
+                if(thisResource._activeQuerySettings["queryId"]) Freech.bumpQueryId(thisResource._activeQuerySettings["queryId"]);
                 thisResource._activeQuerySettings = {};
                 thisResource._updateInProgress = false;
             
@@ -203,9 +208,10 @@ FreechResource.prototype.setQuerySettings = function (settings) {
 FreechResource.prototype._handleError = function (error) {
     
     this._updateInProgress = false;
-	
     this.getQuerySetting("errorfunc").call(this,error);
-    
+    if(this._activeQuerySettings["queryId"])  Freech.bumpQueryId(this._activeQuerySettings["queryId"]);
+    this._activeQuerySettings={};
+  
 }
 
 FreechResource.prototype._log = function (log) {
@@ -234,8 +240,8 @@ FreechResource.prototype.RPC = function (method, params, resultFunc, errorFunc) 
     if ( (typeof $ == "function") &amp;&amp; ( typeof $.JsonRpcClient == "function") ) {
         
         var foo = new $.JsonRpcClient({ 
-        ajaxUrl: this.getQuerySetting("host"),
-        timeout: this.getQuerySetting("timeout")
+        ajaxUrl: thisResource.getQuerySetting("host"),
+        timeout: thisResource.getQuerySetting("timeout")
         });
         foo.call(method, params,
             function(ret) { if(typeof resultFunc === "function") resultFunc(ret); },
@@ -245,30 +251,63 @@ FreechResource.prototype.RPC = function (method, params, resultFunc, errorFunc) 
     } else {
                     
         var request = require('request');
+        var requestBody = '{"jsonrpc": "2.0", "method": "'+method+'", "params": '+JSON.stringify(params)+', "id": 0}';
         request({
           
-            uri: this.getQuerySetting("host"),
+            uri: thisResource.getQuerySetting("host"),
             method: "POST",
-            timeout: this.getQuerySetting("timeout"),
+            timeout: thisResource.getQuerySetting("timeout"),
             followRedirect: true,
             maxRedirects: 10,
-            body: '{"jsonrpc": "2.0", "method": "'+method+'", "params": '+JSON.stringify(params)+', "id": 0}'
+            body: requestBody
           
-        }, function(error, response, body) {
+        }, function(error, response, responseBody) {
             
             if (error) { 
-				
-				error.message = "Host not reachable (http error).";
-				
-				thisResource._handleError(error)
+				                
+                thisResource._handleError({
+                    message: "Host not reachable.",
+                    data: error.code,
+                    code: 32090                    
+                  })
 			
 			} else {
-                var res = JSON.parse(body);
-                if (res.error) {
-                    thisResource._handleError(res.error);
-                } else {
-                    resultFunc(res.result);
+              
+              if (response.statusCode&lt;200 || response.statusCode>299) {
+                    console.debug("request: %o", requestBody);
+                    console.debug("response: %o", responseBody);
+                  thisResource._handleError({
+                    message: "Request was not processed successfully (http error: "+response.statusCode+").",
+                    data: response.statusCode,
+                    code: 32091                    
+                  })
+                  
+              } else {
+              
+                try {
+                  
+                  var res = JSON.parse(responseBody);
+                  
+                  
+                } catch (err) {
+
+                  thisResource._handleError({
+                    message: "An error occurred while parsing the JSON response body.",
+                    code: 32092
+                  })
+
+                  var res = null;
                 }
+
+                if(res){
+                  if (res.error) {
+                    thisResource._handleError(res.error);
+                  } else {
+                    resultFunc(res.result);
+                  }
+                }
+                                
+              } 
                 
             }
             
@@ -301,9 +340,11 @@ FreechResource.prototype.dhtget = function (args,cbfunc) {
                 var signingUser = res[0].sig_user;
                 
                 if (signatureVerification!="none" 
-					&amp;&amp; (args[2]="m" || (args[0]==signingUser) ) ) {
+					&amp;&amp; (args[2]=="m" || (args[0]==signingUser) ) ) {
                   
                     thisResource._log("issuing signature verification");
+                  
+                    var stash = JSON.parse(JSON.stringify(thisResource.flatten()));
                 
                     if (signatureVerification=="background") { cbfunc(res); }
 
@@ -320,6 +361,8 @@ FreechResource.prototype.dhtget = function (args,cbfunc) {
 								
                             } else {
 
+                                thisResource.inflate(stash);
+                              
                                 thisResource._handleError({
                                   message: "DHT resource signature could not be verified",
                                   code: 32050
@@ -369,13 +412,13 @@ FreechResource.prototype.dhtget = function (args,cbfunc) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechRefreechs.html">FreechRefreechs</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechRefreechs.html">FreechRefreechs</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun May 03 2015 15:37:38 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Mar 21 2023 10:07:13 GMT+0200 (South Africa Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -36,7 +36,7 @@ var FreechResource = require('../FreechResource.js');
  * @class
  */
 FreechTorrent = function (walletusername,name,scope) {
-    
+
   this._hasParentUser = true;
 
   this._walletusername = walletusername;
@@ -45,8 +45,8 @@ FreechTorrent = function (walletusername,name,scope) {
 
   this._latestId = -1;
   this._messages = {};
-    
-  
+
+
   this._active = false;
   this._type = "torrent";
 
@@ -63,7 +63,7 @@ FreechTorrent.prototype.flatten = function () {
   flatData.active = this._active;
 
   return flatData;
-    
+
 }
 
 FreechTorrent.prototype.inflate = function (flatData) {
@@ -74,8 +74,20 @@ FreechTorrent.prototype.inflate = function (flatData) {
 
 }
 
+FreechTorrent.prototype.trim = function (timestamp) {
+
+  if ( !this._active &amp;&amp; (!timestamp || timestamp > this._lastUpdate) ){
+
+    var thisAccount = this._scope.getAccount(this._walletusername);
+
+    delete thisAccount._torrents[this._name];
+
+  }
+
+}
+
 FreechTorrent.prototype.activate = function () {
-  
+  var Freech = this._scope;
   this._active = true;
   var thisStream = Freech.getUser(this._name)._stream;
   thisStream._activeTorrentUser = this._walletusername;
@@ -83,11 +95,11 @@ FreechTorrent.prototype.activate = function () {
 }
 
 FreechTorrent.prototype.deactivate = function () {
-  
+
   this._active = false;
-  
+
   var foundReplacement = false;
-  
+
   for (var username in Freech._wallet){
 
     if (this._name in Freech._wallet[username]._torrents) {
@@ -97,7 +109,7 @@ FreechTorrent.prototype.deactivate = function () {
       }
     }
   }
-  
+
   if (!foundReplacement) {
     var thisStream = Freech.getUser(this._name)._stream;
     thisStream._activeTorrentUser = null;
@@ -140,42 +152,45 @@ FreechTorrent.prototype._queryAndDo = function (cbfunc) {
   var Freech = this._scope;
 
   var thisTorrent = this;
-  
+
   var thisAccount = Freech.getAccount(this._walletusername);
-  
+
   if (thisTorrent._active) {
-    
+
     thisTorrent._log("locking torrents of same account")
-    
+
     for (var username in thisAccount._torrents){
 
-      if (thisAccount._torrents[username]._active) {              
+      if (thisAccount._torrents[username]._active) {
           thisAccount._torrents[username]._updateInProgress = true;
       }
     }
 
     thisTorrent.RPC("getlasthave", [ this._walletusername ], function(res) {
 
-      if (thisTorrent._name in res) { 
+      if (thisTorrent._name in res) {
 
         thisTorrent._active = true ;
-        
+
         thisTorrent._log("updating other torrents based on getlasthave result")
-        
+
         for (var username in res) {
 
-          var resTorrent = thisAccount._torrents[username];
+          if (username in thisAccount._torrents) {
 
-          if (resTorrent._active) {
+            var resTorrent = thisAccount._torrents[username];
 
-            resTorrent._latestId = res[username];       
-            resTorrent._lastUpdate = Date.now()/1000;  
-            resTorrent._updateInProgress = false;
+            if (resTorrent._active) {
 
+              resTorrent._latestId = res[username];
+              resTorrent._lastUpdate = Date.now()/1000;
+              resTorrent._updateInProgress = false;
+
+            }
           }
-          
+
         }
-        
+
 
       } else {
 
@@ -184,12 +199,12 @@ FreechTorrent.prototype._queryAndDo = function (cbfunc) {
         thisTorrent._handleError({mesage:"Torrent not active on server"});
 
       }
-      
+
       thisTorrent._log("unlocking torrents with same following name")
-      
+
       for (var username in thisAccount._torrents){
 
-      if (thisAccount._torrents[username]._active) {              
+      if (thisAccount._torrents[username]._active) {
           thisAccount._torrents[username]._updateInProgress = false;
       }
     }
@@ -205,14 +220,14 @@ FreechTorrent.prototype._queryAndDo = function (cbfunc) {
       thisTorrent._handleError(ret);
 
     });
-    
+
   } else {
-     
+
     thisTorrent._handleError({
       message: "Torrent inactive. Activate torrent first!",
       code: 32082
     });
-    
+
   }
 
 }
@@ -229,7 +244,7 @@ FreechTorrent.prototype._fillCacheUsingGetposts = function (count,requests,cbfun
     thisStream._log("querying getposts for "+requests.length+" users")
 
     for (var i in requests){
-      Freech.getUser(requests[i].username)._stream._updateInProgress = true;    
+      Freech.getUser(requests[i].username)._stream._updateInProgress = true;
     }
 
     thisTorrent.RPC("getposts", [ count , requests ], function(res) {
@@ -325,7 +340,7 @@ FreechTorrent.prototype._fillCacheUsingGetposts = function (count,requests,cbfun
     cbfunc(false);
 
   }
-    
+
 }
 
 FreechTorrent.prototype._checkForUpdatesUsingGetLastHave = function (cbfunc) {
@@ -335,15 +350,15 @@ FreechTorrent.prototype._checkForUpdatesUsingGetLastHave = function (cbfunc) {
   var thisTorrent = this;
   var thisStream = Freech.getUser(this._name)._stream;
   var thisAccount = Freech.getAccount(this._walletusername);
-    
-  
+
+
   for (var username in thisAccount._torrents){
 
-    if (thisAccount._torrents[username]._active) {              
+    if (thisAccount._torrents[username]._active) {
         Freech.getUser(username)._stream._updateInProgress = true;
     }
   }
-  
+
   thisTorrent._checkQueryAndDo( function() {
 
     if (thisTorrent._active) {
@@ -356,8 +371,8 @@ FreechTorrent.prototype._checkForUpdatesUsingGetLastHave = function (cbfunc) {
 
         if (resTorrent._active) {
 
-          resTorrent._latestId = resTorrent._latestId;       
-          resTorrent._lastUpdate = Date.now()/1000;  
+          resTorrent._latestId = resTorrent._latestId;
+          resTorrent._lastUpdate = Date.now()/1000;
           resTorrent._updateInProgress = false;
 
         }
@@ -381,7 +396,7 @@ FreechTorrent.prototype._checkForUpdatesUsingGetLastHave = function (cbfunc) {
 
           for (var username in thisAccount._torrents){
 
-            if (thisAccount._torrents[username]._active) {              
+            if (thisAccount._torrents[username]._active) {
                 Freech.getUser(username)._stream._updateInProgress = false;
             }
           }
@@ -396,40 +411,40 @@ FreechTorrent.prototype._checkForUpdatesUsingGetLastHave = function (cbfunc) {
 
     for (var username in thisAccount._torrents){
 
-      if (thisAccount._torrents[username]._active) {              
+      if (thisAccount._torrents[username]._active) {
           Freech.getUser(username)._stream._updateInProgress = false;
       }
     }
 
   });
-    
+
 }
 
 FreechTorrent.prototype.updatePostsCache = function (cbfunc) {
-    
+
   var Freech = this._scope;
 
   var thisTorrent = this;
   var thisStream = Freech.getUser(this._name)._stream;
 
-  thisStream._log("update posts cache "+thisStream._name)  
+  thisStream._log("update posts cache "+thisStream._name)
 
   thisTorrent._checkForUpdatesUsingGetLastHave(function(uptodate){
 
     if (uptodate) {
-    thisStream._log("lasthaves "+thisTorrent._name+" worked") 
+    thisStream._log("lasthaves "+thisTorrent._name+" worked")
 
       cbfunc(true);
 
     } else {
-    thisStream._log("lasthaves "+thisTorrent._name+" failed") 
+    thisStream._log("lasthaves "+thisTorrent._name+" failed")
 
       thisTorrent._fillCacheUsingGetposts(30,[{username:thisTorrent._name}],cbfunc);
 
     }
 
   });
-    
+
 }
 
 FreechTorrent.prototype.fillPostsCache = function (id,cbfunc) {
@@ -440,11 +455,12 @@ FreechTorrent.prototype.fillPostsCache = function (id,cbfunc) {
   var thisUser = Freech.getUser(this._name);
   var thisStream = Freech.getUser(this._name)._stream;
 
-  thisStream._log("fill cache "+thisTorrent._name+" id "+id)  
+  thisStream._log("fill cache "+thisTorrent._name+" id "+id)
 
   thisTorrent._fillCacheUsingGetposts(30,[{username:thisTorrent._name,max_id:id}],cbfunc);
 
-}</code></pre>
+}
+</code></pre>
         </article>
     </section>
 
@@ -454,13 +470,13 @@ FreechTorrent.prototype.fillPostsCache = function (id,cbfunc) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechRefreechs.html">FreechRefreechs</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechRefreechs.html">FreechRefreechs</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun May 03 2015 15:37:38 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Mar 21 2023 10:07:13 GMT+0200 (South Africa Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

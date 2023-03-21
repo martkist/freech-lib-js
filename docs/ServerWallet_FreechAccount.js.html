@@ -56,6 +56,24 @@ module.exports = FreechAccount;
 
 inherits(FreechAccount,FreechResource);
 
+FreechAccount.prototype.createUser = function (name, cbfunc) {
+
+     this.RPC("createwalletuser",[name], cbfunc,
+
+     function(err){
+         return err
+     });
+}
+
+FreechAccount.prototype.propagateUser = function (name, cbfunc) {
+
+      this.RPC("sendnewusertransaction",[name], cbfunc,
+
+     function(err){
+         return err
+     })
+}
+
 FreechAccount.prototype.flatten = function () {
     
     var flatData = FreechResource.prototype.flatten.call(this);
@@ -106,6 +124,19 @@ FreechAccount.prototype.inflate = function (flatData) {
     }
 
 }
+
+FreechAccount.prototype.trim = function (timestamp) {
+
+  for (var username in this._directmessages){
+    this._directmessages[username].trim(timestamp);
+  }
+
+  for (var username in this._torrents){
+    this._torrents[username].trim(timestamp);
+  }
+  
+}
+
 
 FreechAccount.prototype.getUsername = function () {return this._name}
 
@@ -339,15 +370,15 @@ FreechAccount.prototype.post = function (msg,cbfunc) {
         msg
     ],function(result){
       
-      var FreechPost = require("../FreechPost.js");      
-      var data = {};
-      data.n = thisAccount._name;
-      data.k = newid;
-      data.time = Math.round(Date.now()/1000);
-      data.msg = msg;
-      var newpost = new FreechPost(data,"",Freech);
-      cbfunc(newpost);
-      Freech.getUser(thisAccount._name).doStatus(function(){},{outdatedLimit: 0});
+//      var FreechPost = require("../FreechPost.js");      
+//      var data = {};
+//      data.n = thisAccount._name;
+//      data.k = newid;
+//      data.time = Math.round(Date.now()/1000);
+//      data.msg = msg;
+//      var newpost = new FreechPost(data,"",Freech);
+//      cbfunc(newpost);
+      Freech.getUser(thisAccount._name).doStatus(cbfunc,{outdatedLimit: 0});
     },function(error){
       thisAccount._handleError(error);
     });
@@ -375,16 +406,16 @@ FreechAccount.prototype.reply = function (replyusername,replyid,msg,cbfunc) {
         replyid
     ],function(result){
       
-      var FreechPost = require("../FreechPost.js");      
-      var data = {};
-      data.n = thisAccount._name;
-      data.k = newid;
-      data.time = Math.round(Date.now()/1000);
-      data.msg = msg;
-      data.reply = { k: replyid, n: replyusername };
-      var newpost = new FreechPost(data,"",Freech);
-      cbfunc(newpost);
-      Freech.getUser(thisAccount._name).doStatus(function(){},{outdatedLimit: 0});
+//      var FreechPost = require("../FreechPost.js");      
+//      var data = {};
+//      data.n = thisAccount._name;
+//      data.k = newid;
+//      data.time = Math.round(Date.now()/1000);
+//      data.msg = msg;
+//      data.reply = { k: replyid, n: replyusername };
+//      var newpost = new FreechPost(data,"",Freech);
+//      cbfunc(newpost);
+      Freech.getUser(thisAccount._name).doStatus(cbfunc,{outdatedLimit: 0});
     },function(error){
       thisAccount._handleError(error);
     });
@@ -412,15 +443,15 @@ FreechAccount.prototype.refreech = function (rtusername,rtid,cbfunc) {
           {  sig_userpost: post._signature, userpost: post._data }
       ],function(result){
 
-        var FreechPost = require("../FreechPost.js");      
-        var data = {};
-        data.n = thisAccount._name;
-        data.k = newid;
-        data.time = Math.round(Date.now()/1000);
-        data.rt = post._data;
-        var newpost = new FreechPost(data,"",Freech);
-        cbfunc(newpost);
-        Freech.getUser(thisAccount._name).doStatus(function(){},{outdatedLimit: 0});
+//        var FreechPost = require("../FreechPost.js");      
+//        var data = {};
+//        data.n = thisAccount._name;
+//        data.k = newid;
+//        data.time = Math.round(Date.now()/1000);
+//        data.rt = post._data;
+//        var newpost = new FreechPost(data,"",Freech);
+//        cbfunc(newpost);
+        Freech.getUser(thisAccount._name).doStatus(cbfunc,{outdatedLimit: 0});
         
       },function(error){
         thisAccount._handleError(error);
@@ -471,7 +502,8 @@ FreechAccount.prototype.doLatestDirectMessagesUntil = function (username, cbfunc
 
 	this.getDirectMessages(username)._doUntil(cbfunc, querySettings);
 
-}</code></pre>
+}
+</code></pre>
         </article>
     </section>
 
@@ -481,13 +513,13 @@ FreechAccount.prototype.doLatestDirectMessagesUntil = function (username, cbfunc
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechRefreechs.html">FreechRefreechs</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Freech.html">Freech</a></li><li><a href="module-FreechAvatar.html">FreechAvatar</a></li><li><a href="module-FreechFollowings.html">FreechFollowings</a></li><li><a href="module-FreechHashtag.html">FreechHashtag</a></li><li><a href="module-FreechMentions.html">FreechMentions</a></li><li><a href="module-FreechPost.html">FreechPost</a></li></ul><h3>Classes</h3><ul><li><a href="FreechDirectMessages.html">FreechDirectMessages</a></li><li><a href="FreechProfile.html">FreechProfile</a></li><li><a href="FreechPromotedPosts.html">FreechPromotedPosts</a></li><li><a href="FreechPubKey.html">FreechPubKey</a></li><li><a href="FreechRefreechs.html">FreechRefreechs</a></li><li><a href="FreechReplies.html">FreechReplies</a></li><li><a href="FreechResource.html">FreechResource</a></li><li><a href="FreechStream.html">FreechStream</a></li><li><a href="FreechTorrent.html">FreechTorrent</a></li><li><a href="FreechUser.html">FreechUser</a></li><li><a href="ServerWallet_FreechAccount.html">ServerWallet_FreechAccount</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getAllFields">getAllFields</a></li><li><a href="global.html#getField">getField</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Sun May 03 2015 15:37:38 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Mar 21 2023 10:07:13 GMT+0200 (South Africa Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

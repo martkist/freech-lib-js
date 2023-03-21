@@ -33,5 +33,9 @@
     "crypto": "*",
     "inherits": "*",
     "request": "*"
+  },
+  "devDependencies": {
+    "browserify": "^17.0.0",
+    "jsdoc": "^4.0.2"
   }
 }
