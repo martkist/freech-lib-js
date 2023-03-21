@@ -1,7 +1,7 @@
 {
   "name": "freech-lib-js",
-  "version": "0.4.1",
-  "description": "A javascript library for freech (see freech.net.co)",
+  "version": "0.4.2",
+  "description": "A javascript library for freech (see https://github.com/martkist/freech-core)",
   "main": "src/Freech.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
