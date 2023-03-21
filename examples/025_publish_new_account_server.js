@@ -7,7 +7,7 @@
 var FreechLocal =  require("../src/Freech.js");
 
 
- FreechLocal.publishServerSideAccount ( 'martkistdevs' ,
+ FreechLocal.publishServerSideAccount ( 'testytester2' ,
        function() {
  });
 

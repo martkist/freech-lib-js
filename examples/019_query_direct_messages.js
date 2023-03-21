@@ -10,7 +10,7 @@ Freech.loadServerAccounts(function(){
 
 	var count=1;
 	
-	Freech.getAccount("martkistdevs").doLatestDirectMessagesUntil("timbuktu",function(message){
+	Freech.getAccount("martkistdevs").doLatestDirectMessagesUntil("frimbuktu",function(message){
 	
 		console.log(message.getSender()+": "+message.getContent());
 		if (count++==5) { return false }

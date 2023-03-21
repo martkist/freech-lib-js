@@ -6,18 +6,18 @@ Freech = require("../src/Freech.js");
 
 Freech.loadServerAccounts(function(){
 	
-  Freech.getAccount("pampalulu").activateTorrents(function(){
+  Freech.getAccount("frimbuktu").activateTorrents(function(){
 
-    Freech.getAccount("pampalulu").follow("bbc_world",function(newfollowings){
+    Freech.getAccount("frimbuktu").follow("martkistdevs",function(newfollowings){
 
-      console.log("following bbc_world: ");
+      console.log("following martkistdevs: ");
       newfollowings.map(function(fol){
         console.log(fol.getUsername())
       });
 
-      Freech.getAccount("pampalulu").unfollow("bbc_world",function(newfollowings){
+      Freech.getAccount("frimbuktu").unfollow("martkistdevs",function(newfollowings){
 
-        console.log("not following bbc_world: ");
+        console.log("not following martkistdevs: ");
         newfollowings.map(function(fol){
           console.log(fol.getUsername())
         });

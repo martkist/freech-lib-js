@@ -9,7 +9,7 @@
 
 var FreechLocal =  require("../src/Freech.js");
 
- FreechLocal.generateServerSideAccount ( 'martkistdevs' , 
+ FreechLocal.generateServerSideAccount ( 'testytester2' , 
 	function(result){ 
 
 		console.log( "your priv key : " + result  ); 

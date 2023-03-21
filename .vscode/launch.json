@@ -156,6 +156,78 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/examples/017_create_new_post.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "018_follow_unfollow",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/018_follow_unfollow.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "019_query_direct_messages",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/019_query_direct_messages.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "020_remote_procedure_call",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/020_remote_procedure_call.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "021_deep_fetching",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/021_deep_fetching.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "022_using_promises",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/022_using_promises.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "023_create_new_account_client",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/023_create_new_account_client.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "024_create_new_account_server",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/024_create_new_account_server.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "025_publish_new_account_server",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/examples/025_publish_new_account_server.js"
         }
     ]
 }
