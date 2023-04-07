@@ -19,7 +19,7 @@ var bs58check = require('bs58check');*/
 
 var freech_network = Bitcoin.networks.bitcoin;
 
-freech_network.messagePrefix= '\x18freech Signed Message:\n';
+freech_network.messagePrefix= '\x17freech Signed Message:\n';
 
 /**
  * Describes the public key of a user.

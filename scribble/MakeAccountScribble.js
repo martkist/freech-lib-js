@@ -4,7 +4,7 @@ var Bitcoin = require('bitcoinjs-lib');
 
 var freech_network = Bitcoin.networks.bitcoin;
 
-freech_network.messagePrefix= '\x18freech Signed Message:\n';
+freech_network.messagePrefix= '\x17freech Signed Message:\n';
 
 var keypair = Bitcoin.ECPair.makeRandom(freech_network);
 pubkey = keypair.getPublicKeyBuffer().toString('hex');
