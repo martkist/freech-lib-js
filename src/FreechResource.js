@@ -216,8 +216,21 @@ FreechResource.prototype.RPC = function (method, params, resultFunc, errorFunc) 
         timeout: thisResource.getQuerySetting("timeout")
         });
         foo.call(method, params,
-            function(ret) { if(typeof resultFunc === "function") resultFunc(ret); },
-            function(ret) { if(typeof errorFunc === "function" && ret != null) errorFunc(ret); }
+            function(ret) 
+            { 
+              if(typeof resultFunc === "function") 
+                resultFunc(ret);
+            },
+            function(ret) 
+            { 
+              if (ret != null)
+              {
+                if(typeof errorFunc === "function")
+                  errorFunc(ret); 
+                else
+                  console.error("RPC %s(%o) failed: %o", method, params, ret);
+              }
+            }
         );
         
     } else {
