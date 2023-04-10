@@ -353,9 +353,10 @@ FreechTorrent.prototype._checkForUpdatesUsingGetLastHave = function (cbfunc) {
 
         }
 
-        thisTorrent._log("comparing latest id for ",username,resTorrent._latestId,Freech.getUser(username)._stream._latestId);
+        const currentId = Freech.getUser(username)._stream._latestId;
+        console.debug("%s has latestId %i and currentId %i", username, resTorrent._latestId, currentId);
         
-        if (resTorrent._latestId==Freech.getUser(username)._stream._latestId) {
+        if (resTorrent._latestId == currentId) {
 
           Freech.getUser(username)._stream._lastUpdate=Date.now()/1000;
           Freech.getUser(username)._stream._updateInProgress=false;
@@ -371,18 +372,21 @@ FreechTorrent.prototype._checkForUpdatesUsingGetLastHave = function (cbfunc) {
 
       }
 
-      thisTorrent._fillCacheUsingGetposts(30,outdatedUsers,function(){
+      if (outdatedUsers.length > 0)
+      {
+        thisTorrent._fillCacheUsingGetposts(30,outdatedUsers,function(){
 
-          cbfunc(true);
+            cbfunc(true);
 
-          for (var username in thisAccount._torrents){
+            for (var username in thisAccount._torrents){
 
-            if (thisAccount._torrents[username]._active) {              
-                Freech.getUser(username)._stream._updateInProgress = false;
+              if (thisAccount._torrents[username]._active) {              
+                  Freech.getUser(username)._stream._updateInProgress = false;
+              }
             }
-          }
 
-      });
+        });
+      }
 
     } else {
 
@@ -420,7 +424,7 @@ FreechTorrent.prototype.updatePostsCache = function (cbfunc) {
     } else {
     thisStream._log("lasthaves "+thisTorrent._name+" failed") 
 
-      thisTorrent._fillCacheUsingGetposts(30,[{username:thisTorrent._name}],cbfunc);
+  thisTorrent._fillCacheUsingGetposts(30,[{username:thisTorrent._name}],cbfunc);
 
     }
 

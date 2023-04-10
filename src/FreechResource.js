@@ -99,7 +99,7 @@ FreechResource.prototype._checkQueryAndDo = function (cbfunc,querySettings) {
 
         } else {
               
-            thisResource._log("resource not in cache. querying");
+            thisResource._log("resource stale or not in cache. querying");
             
             thisResource._queryAndDo(function(newresource){
                 
@@ -188,7 +188,7 @@ FreechResource.prototype._handleError = function (error) {
 
 FreechResource.prototype._log = function (log) {
     
-    this.getQuerySetting("logfunc").call(this,log);
+    console.debug(log + ": %o", this);
     
 }
 
@@ -218,6 +218,7 @@ FreechResource.prototype.RPC = function (method, params, resultFunc, errorFunc) 
         foo.call(method, params,
             function(ret) 
             { 
+              console.debug("RPC %s(%o) succeeded: %o", method, params, ret);
               if(typeof resultFunc === "function") 
                 resultFunc(ret);
             },
